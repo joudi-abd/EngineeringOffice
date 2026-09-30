@@ -1,0 +1,51 @@
+:root {
+  --ink: #10151c;
+  --ink-2: #171e28;
+  --paper: #f6f2eb;
+  --muted: rgba(246, 242, 235, 0.72);
+  --gold: #c6a15b;
+  --gold-soft: #e4d3b4;
+  --line: rgba(246, 242, 235, 0.16);
+  --serif: "Cormorant Garamond", "Times New Roman", serif;
+  --sans: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --script: "Great Vibes", "Segoe Script", cursive;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--sans);
+  font-weight: 400;
+}
+
+button,
+a {
+  font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+::selection {
+  background: rgba(198, 161, 91, 0.35);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

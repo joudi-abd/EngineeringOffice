@@ -1,0 +1,194 @@
+<header class="top" [class.top--solid]="scrolled || menuOpen">
+  <button
+    class="burger"
+    type="button"
+    aria-label="Open menu"
+    [attr.aria-expanded]="menuOpen"
+    (click)="toggleMenu($event)"
+  >
+    <span></span>
+    <span></span>
+  </button>
+
+  <nav class="links" aria-label="Primary">
+    <!-- <div class="drop">
+      <button
+        class="links__item"
+        type="button"
+        [attr.aria-expanded]="aboutOpen"
+        aria-controls="about-menu"
+        (click)="toggleAbout($event)"
+      >
+        About
+        <svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1.4 6 6.2 11 1.4"/></svg>
+      </button>
+      @if (aboutOpen) {
+        <div class="panel" id="about-menu" (click)="$event.stopPropagation()">
+          @for (link of aboutLinks; track link.href) {
+            <a [href]="link.href" (click)="follow($event, link.href)">{{ link.label }}</a>
+          }
+        </div>
+      }
+    </div> -->
+    <a class="links__item" href="#progress" (click)="follow($event, '#progress')">Projects</a>
+    <a class="links__item" href="#progress" (click)="follow($event, '#progress')">About</a>
+    <a class="links__item" href="#progress" (click)="follow($event, '#progress')">Construction progress</a>
+    <a class="links__item" href="#contact" (click)="follow($event, '#contact')">Contact us</a>
+  </nav>
+
+  <a class="logo" href="#top" aria-label="Victory Park Residences" (click)="follow($event, '#top')">
+    <svg class="logo__mark" viewBox="0 0 86 34" aria-hidden="true">
+      <path d="M1 21.2 13.2 4.8h2.6L4.4 23.6z"/>
+      <path d="M10 23 22.4 4.8h2.6L13.4 25.6z"/>
+      <path d="M24.2 7.2 36.2 29.2h2.8L27.8 7.2z"/>
+      <path d="M47.6 7.2 38.4 29.2h2.8l9.2-22z"/>
+      <path d="M50.2 4.8 62.4 23 58.8 25.6 47.4 4.8z"/>
+      <path d="M59.2 4.8 71.2 21.2 67.6 23.6 56.2 4.8z"/>
+    </svg>
+    <span class="logo__name">UFUQ<br />IMPERIUM</span>
+  </a>
+
+  <!-- <div class="actions">
+    <a class="phone" href="tel:+74952923000">+7 495 292 30 00</a>
+    <div class="drop drop--end">
+      <button
+        class="select"
+        type="button"
+        [attr.aria-expanded]="apartmentsOpen"
+        aria-controls="apartment-menu"
+        (click)="toggleApartments($event)"
+      >
+        {{ selectedType || 'Select an apartment' }}
+        <svg viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1.4 6 6.2 11 1.4"/></svg>
+      </button>
+      @if (apartmentsOpen) {
+        <div class="panel panel--end" id="apartment-menu" (click)="$event.stopPropagation()">
+          @for (type of apartmentTypes; track type) {
+            <button type="button" (click)="chooseApartment(type)">{{ type }}</button>
+          }
+        </div>
+      }
+    </div>
+    <button
+      class="heart"
+      type="button"
+      [class.heart--on]="saved"
+      [attr.aria-pressed]="saved"
+      [attr.aria-label]="saved ? 'Remove from saved' : 'Save this residence'"
+      (click)="toggleSaved()"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 20.2 4.4 12.8a4.6 4.6 0 0 1 6.5-6.5L12 7.4l1.1-1.1a4.6 4.6 0 0 1 6.5 6.5z"/>
+      </svg>
+    </button>
+  </div> -->
+
+  @if (menuOpen) {
+    <div class="drawer" (click)="$event.stopPropagation()">
+      <p class="drawer__label">About</p>
+      @for (link of aboutLinks; track link.href) {
+        <a [href]="link.href" (click)="follow($event, link.href)">{{ link.label }}</a>
+      }
+      <a href="#progress" (click)="follow($event, '#progress')">Construction progress</a>
+      <a href="#contact" (click)="follow($event, '#contact')">Contact us</a>
+      <a class="drawer__phone" href="tel:+74952923000">+7 495 292 30 00</a>
+      <p class="drawer__label">Select an apartment</p>
+      @for (type of apartmentTypes; track type) {
+        <button type="button" (click)="chooseApartment(type)">{{ type }}</button>
+      }
+    </div>
+  }
+</header>
+
+<main id="top">
+  <section class="hero" aria-label="Victory Park Residences">
+    <img
+      class="hero__photo"
+      src="images/hero.jpg"
+      alt="Curved glass residential towers at Victory Park in late afternoon light"
+    />
+    <div class="hero__shade"></div>
+    <div class="hero__base"></div>
+
+    <h1 class="brand">
+      <span class="brand__line">UFUQ</span>
+      <span class="brand__line brand__line--park">
+        IMPREIUM
+        <span class="brand__script">Urbanism</span>
+      </span>
+    </h1>
+
+    <button class="scroll" type="button" aria-label="Scroll to the next section" (click)="scrollNext()">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 9.5 12 15.5 18 9.5"/>
+      </svg>
+    </button>
+  </section>
+
+  <section class="chapter" id="about">
+    <div class="chapter__copy">
+      <p class="eyebrow">About the quarter</p>
+      <h2>A park address, drawn in glass.</h2>
+      <p class="lede">
+        Victory Park Residences is a residential quarter of curved glass towers
+        set above a landscaped court. Daylight, long views, and a measured
+        pace of construction.
+      </p>
+    </div>
+    <dl class="facts">
+      <div>
+        <dt>04</dt>
+        <dd>Residential buildings</dd>
+      </div>
+      <div>
+        <dt>12</dt>
+        <dd>Floors in the main tower</dd>
+      </div>
+      <div>
+        <dt>Park</dt>
+        <dd>At the foot of the residences</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="notes" aria-label="Architecture, location, and amenities">
+    <article id="architecture">
+      <p class="eyebrow">Architecture</p>
+      <h3>Rounded corners, floor to ceiling glass.</h3>
+      <p>The main tower turns toward the light. Horizontal bands mark each floor, and the glass carries the sky down to the trees.</p>
+    </article>
+    <article id="location">
+      <p class="eyebrow">Location</p>
+      <h3>A quiet edge of the park.</h3>
+      <p>The buildings sit back from the street, with the court and trees in front and the city only as a distant edge.</p>
+    </article>
+    <article id="amenities">
+      <p class="eyebrow">Amenities</p>
+      <h3>Courtyard, lobby, and private views.</h3>
+      <p>A landscaped court, a calm lobby, and apartments planned around the long glazed walls of the tower.</p>
+    </article>
+  </section>
+
+  <section class="progress" id="progress">
+    <div class="progress__head">
+      <p class="eyebrow">Construction progress</p>
+      <h2>The structure is underway.</h2>
+    </div>
+    <ol class="stages">
+      @for (stage of stages; track stage.index) {
+        <li [class.stages__done]="stage.state === 'Complete'" [class.stages__now]="stage.state === 'In progress'">
+          <span class="stages__index">{{ stage.index }}</span>
+          <span class="stages__name">{{ stage.name }}</span>
+          <span class="stages__state">{{ stage.state }}</span>
+        </li>
+      }
+    </ol>
+  </section>
+
+  <section class="contact" id="contact">
+    <p class="eyebrow">Contact us</p>
+    <h2>The sales gallery receives visitors by appointment.</h2>
+    <a class="contact__phone" href="tel:+74952923000">+7 495 292 30 00</a>
+    <p class="contact__note">Victory Park Residences</p>
+  </section>
+</main>
