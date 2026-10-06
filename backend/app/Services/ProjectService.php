@@ -3,9 +3,12 @@
 namespace App\Services;
 
 use App\Models\Project;
+use App\Support\StorageUrl;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 class ProjectService
@@ -15,7 +18,7 @@ class ProjectService
         ?bool $featuredOnly = null
     ): Collection {
         return Project::query()
-            ->with('category')
+            ->with(['category', 'images'])
             ->where('status', 'completed')
             ->when(
                 $categoryId,
@@ -52,11 +55,18 @@ class ProjectService
 
     public function create(array $data): Project
     {
-        return DB::transaction(function () use ($data) {
+        $coverPath = $this->storeCover($data);
+
+        try {
+            return DB::transaction(function () use ($data, $coverPath) {
 
             $serviceIds = $data['service_ids'] ?? [];
 
             unset($data['service_ids']);
+
+            if ($coverPath) {
+                $data['cover_image'] = $coverPath;
+            }
 
             $project = Project::create($data);
 
@@ -80,18 +90,33 @@ class ProjectService
                 'services',
                 'images',
             ]);
-        });
+            });
+        } catch (\Throwable $e) {
+            if ($coverPath) {
+                Storage::disk('public')->delete($coverPath);
+            }
+
+            throw $e;
+        }
     }
 
     public function update(
         Project $project,
         array $data
     ): Project {
-        return DB::transaction(function () use ($project, $data) {
+        $coverPath = $this->storeCover($data);
+        $previousCover = StorageUrl::relative($project->cover_image);
+
+        try {
+            $updated = DB::transaction(function () use ($project, $data, $coverPath) {
 
             $serviceIds = $data['service_ids'] ?? null;
 
             unset($data['service_ids']);
+
+            if ($coverPath) {
+                $data['cover_image'] = $coverPath;
+            }
 
             $project->update($data);
 
@@ -115,7 +140,32 @@ class ProjectService
                 'services',
                 'images',
             ]);
-        });
+            });
+
+            if ($coverPath && $previousCover && $previousCover !== $coverPath) {
+                Storage::disk('public')->delete($previousCover);
+            }
+
+            return $updated;
+        } catch (\Throwable $e) {
+            if ($coverPath) {
+                Storage::disk('public')->delete($coverPath);
+            }
+
+            throw $e;
+        }
+    }
+
+    private function storeCover(array &$data): ?string
+    {
+        $image = $data['cover_image'] ?? null;
+        unset($data['cover_image']);
+
+        if (!$image instanceof UploadedFile) {
+            return null;
+        }
+
+        return $image->store('projects/covers', 'public');
     }
 
     public function delete(Project $project): void

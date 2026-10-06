@@ -1,0 +1,28 @@
+<a class="kicker" routerLink="/testimonials">الآراء</a>
+<div class="panel">
+  <h1>تعديل الرأي</h1>
+  @if (projectTitle()) { <p class="muted" style="margin-top: 8px">{{ projectTitle() }}</p> }
+  <form class="fields" [formGroup]="form" (ngSubmit)="save()">
+    <label>
+      <span>الاسم</span>
+      <input formControlName="client_name" />
+    </label>
+    <label>
+      <span>التقييم</span>
+      <select formControlName="rating">
+        @for (star of [1, 2, 3, 4, 5]; track star) {
+          <option [value]="star">{{ star }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      <span>النص</span>
+      <textarea formControlName="content"></textarea>
+    </label>
+    @if (error()) { <p class="error">{{ error() }}</p> }
+    <div class="actions">
+      <button class="btn" type="submit" [disabled]="busy()">حفظ</button>
+      <a class="btn-quiet" routerLink="/testimonials">رجوع</a>
+    </div>
+  </form>
+</div>

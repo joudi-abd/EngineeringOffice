@@ -1,0 +1,27 @@
+<div class="shell">
+  <aside class="side">
+    <a class="side__brand" routerLink="/">
+      UFUQ
+      <small>لوحة التحكم</small>
+    </a>
+    <nav aria-label="أقسام اللوحة">
+      @for (item of nav; track item.path) {
+        <a [routerLink]="item.path" routerLinkActive="is-on" [routerLinkActiveOptions]="{ exact: item.exact }">{{ item.label }}</a>
+      }
+    </nav>
+  </aside>
+
+  <div class="main">
+    <header class="bar">
+      <p>{{ auth.user()?.name || 'مدير المكتب' }}</p>
+      <div class="bar__actions">
+        <app-theme-toggle />
+        <button class="btn-quiet" type="button" (click)="logout()">خروج</button>
+      </div>
+    </header>
+    <div class="main__body">
+      <router-outlet />
+    </div>
+  </div>
+</div>
+<app-confirm-dialog />

@@ -1,0 +1,33 @@
+@let c = i18n.content();
+
+<footer class="foot">
+  <div class="foot__grid">
+    <div class="foot__brand">
+      <p class="foot__mark" dir="ltr">UFUQ<br />IMPERIUM</p>
+      <p class="quiet">{{ c.footer.blurb }}</p>
+    </div>
+
+    <nav class="foot__nav" [attr.aria-label]="c.footer.navLabel">
+      @for (item of c.nav; track item.id) {
+        <a [href]="item.href || '#' + item.id" (click)="sections.open($event, item)">{{ item.label }}</a>
+      }
+    </nav>
+
+    <div class="foot__contact">
+      @if (phone()) {
+        <a dir="ltr" [href]="phoneLink()">{{ phone() }}</a>
+      }
+      @if (email()) {
+        <a dir="ltr" [href]="emailLink()" target="_blank" rel="noopener noreferrer">{{ email() }}</a>
+      }
+      @if (address()) {
+        <p>{{ address() }}</p>
+      }
+      @if (hours()) {
+        <p>{{ hours() }}</p>
+      }
+    </div>
+  </div>
+
+  <p class="foot__copy">© {{ year }} {{ c.footer.rights }}</p>
+</footer>

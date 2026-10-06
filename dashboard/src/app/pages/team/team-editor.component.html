@@ -1,0 +1,34 @@
+<a class="kicker" routerLink="/team">الفريق</a>
+<div class="panel">
+  <h1>{{ id() ? 'تعديل العضو' : 'عضو جديد' }}</h1>
+  <form class="fields" [formGroup]="form" (ngSubmit)="save()">
+    <label>
+      <span>الاسم</span>
+      <input formControlName="name" />
+    </label>
+    <label>
+      <span>المسمى</span>
+      <input formControlName="job_title" />
+    </label>
+    <label>
+      <span>نبذة</span>
+      <textarea formControlName="bio"></textarea>
+    </label>
+    @if (imageUrl()) {
+      <img class="thumb" [src]="imageUrl()!" alt="" />
+    }
+    <label>
+      <span>الصورة {{ fileName() }}</span>
+      <input type="file" accept="image/jpeg,image/png,image/jpg" (change)="onFile($event)" />
+    </label>
+    <label class="check">
+      <input type="checkbox" formControlName="is_active" />
+      <span>ظاهر في الموقع</span>
+    </label>
+    @if (error()) { <p class="error">{{ error() }}</p> }
+    <div class="actions">
+      <button class="btn" type="submit" [disabled]="busy()">حفظ</button>
+      <a class="btn-quiet" routerLink="/team">رجوع</a>
+    </div>
+  </form>
+</div>

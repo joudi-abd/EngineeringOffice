@@ -1,0 +1,46 @@
+<div class="page-head">
+  <div>
+    <p class="kicker">المشاريع</p>
+    <h1>التصنيفات</h1>
+  </div>
+  <a class="btn" routerLink="/categories/new">تصنيف جديد</a>
+</div>
+
+@if (error()) {
+  <p class="error">{{ error() }}</p>
+}
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>الاسم</th>
+        <th>الحالة</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of page()?.items ?? []; track item.id) {
+        <tr>
+          <td>{{ item.name }}</td>
+          <td><span class="pill" [class.pill--off]="!item.is_active">{{ item.is_active ? 'ظاهر' : 'مخفي' }}</span></td>
+          <td>
+            <div class="row-actions">
+              <a [routerLink]="['/categories', item.id]">تعديل</a>
+              <button type="button" (click)="remove(item)">حذف</button>
+            </div>
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="3">لا توجد تصنيفات.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+@if ((page()?.meta?.last_page ?? 1) > 1) {
+  <div class="pager">
+    <button class="btn-quiet" type="button" [disabled]="page()!.meta!.current_page <= 1" (click)="load(page()!.meta!.current_page - 1)">السابق</button>
+    <button class="btn-quiet" type="button" [disabled]="page()!.meta!.current_page >= page()!.meta!.last_page" (click)="load(page()!.meta!.current_page + 1)">التالي</button>
+  </div>
+}

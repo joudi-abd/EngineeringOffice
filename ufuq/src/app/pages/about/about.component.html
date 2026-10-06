@@ -1,0 +1,104 @@
+<main id="top" class="page" tabindex="-1">
+  @let page = i18n.content().aboutPage;
+
+  <header class="intro">
+    <p class="kicker">{{ page.eyebrow }}</p>
+    <h1 class="display">{{ page.title }}</h1>
+    <p class="quiet lede">{{ page.lede }}</p>
+  </header>
+
+  <section class="story" aria-labelledby="story-title">
+    <div>
+      <p class="kicker">{{ page.storyEyebrow }}</p>
+      <h2 class="display" id="story-title">{{ page.storyTitle }}</h2>
+      @for (paragraph of page.story; track paragraph) {
+        <p class="quiet lede">{{ paragraph }}</p>
+      }
+    </div>
+  </section>
+
+  <section class="aims" [attr.aria-label]="page.visionEyebrow">
+    <article>
+      <p class="kicker">{{ page.visionEyebrow }}</p>
+      <h2 class="display">{{ page.vision }}</h2>
+    </article>
+    <article>
+      <p class="kicker">{{ page.missionEyebrow }}</p>
+      <h2 class="display">{{ page.mission }}</h2>
+    </article>
+  </section>
+
+  <section class="values" aria-labelledby="values-title">
+    <div class="values__head">
+      <p class="kicker">{{ page.valuesEyebrow }}</p>
+      <h2 class="display" id="values-title">{{ page.valuesTitle }}</h2>
+    </div>
+    <ol class="points">
+      @for (item of page.values; track item.index) {
+        <li>
+          <span>{{ item.index }}</span>
+          <h3>{{ item.name }}</h3>
+          <p class="quiet">{{ item.text }}</p>
+        </li>
+      }
+    </ol>
+  </section>
+
+  @if (services().length) {
+  <section class="fields" aria-labelledby="fields-title">
+    <div>
+      <p class="kicker">{{ page.fieldsEyebrow }}</p>
+      <h2 class="display" id="fields-title">{{ page.fieldsTitle }}</h2>
+      <p class="quiet lede">{{ page.fieldsLede }}</p>
+    </div>
+    <ol class="fields__list">
+      @for (field of services(); track field.id; let index = $index) {
+        <li>
+          <span>{{ index + 1 < 10 ? '0' + (index + 1) : index + 1 }}</span>
+          <div>
+            <h3>{{ field.name }}</h3>
+            <p class="quiet">{{ field.short_description }}</p>
+          </div>
+        </li>
+      }
+    </ol>
+  </section>
+  }
+
+  @if (team().length) {
+    <section class="team" aria-labelledby="team-title">
+      <div class="team__head">
+        <p class="kicker">{{ page.teamEyebrow }}</p>
+        <h2 class="display" id="team-title">{{ page.teamTitle }}</h2>
+      </div>
+      <ul>
+        @for (member of team(); track member.id) {
+          <li class="member">
+            <figure>
+              @if (site.media(member.image_url || member.image); as photo) {
+                <img [src]="photo" [alt]="member.name" />
+              } @else {
+                <span aria-hidden="true">{{ member.name.trim().charAt(0) }}</span>
+              }
+            </figure>
+            <div>
+              <h3>{{ member.name }}</h3>
+              <p class="member__role">{{ member.job_title }}</p>
+              @if (member.bio) {
+                <p class="quiet">{{ member.bio }}</p>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  <section class="next">
+    <h2 class="display">{{ page.nextTitle }}</h2>
+    <div class="next__links">
+      <a class="text-link" href="/#projects" (click)="sections.go($event, 'projects')">{{ page.projects }}</a>
+      <a class="text-link" href="/#contact" (click)="sections.go($event, 'contact')">{{ page.contact }}</a>
+    </div>
+  </section>
+</main>

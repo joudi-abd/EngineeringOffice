@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Support\StorageUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class TeamMemberResource extends JsonResource
 {
@@ -21,7 +21,7 @@ class TeamMemberResource extends JsonResource
             'job_title' => $this->job_title,
             'bio' => $this->bio,
             'image' => $this->image,
-            'image_url' => $this->image ? Storage::disk('public')->url($this->image) : null,
+            'image_url' => StorageUrl::public($this->image),
             'is_active' => $this->is_active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

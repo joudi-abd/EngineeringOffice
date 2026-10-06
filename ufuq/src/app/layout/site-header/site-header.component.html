@@ -1,0 +1,58 @@
+@let c = i18n.content();
+
+<header class="top" [class.top--solid]="scrolled() || menuOpen()">
+  <a class="logo" href="#top" [attr.aria-label]="c.hero.label" (click)="follow($event, 'top')">
+    <!-- <svg class="logo__mark" viewBox="0 0 86 34" aria-hidden="true">
+      <path d="M1 21.2 13.2 4.8h2.6L4.4 23.6z"/>
+      <path d="M10 23 22.4 4.8h2.6L13.4 25.6z"/>
+      <path d="M24.2 7.2 36.2 29.2h2.8L27.8 7.2z"/>
+      <path d="M47.6 7.2 38.4 29.2h2.8l9.2-22z"/>
+      <path d="M50.2 4.8 62.4 23 58.8 25.6 47.4 4.8z"/>
+      <path d="M59.2 4.8 71.2 21.2 67.6 23.6 56.2 4.8z"/>
+    </svg> -->
+    <span class="logo__name">UFUQ<br />IMPERIUM</span>
+  </a>
+
+  <nav class="links" [attr.aria-label]="c.navLabel">
+    @for (item of c.nav; track item.id) {
+      <a
+        class="links__item"
+        [class.is-on]="isCurrent(item)"
+        [href]="item.href || '#' + item.id"
+        (click)="open($event, item)"
+      >{{ item.label }}</a>
+    }
+  </nav>
+
+  <div class="actions">
+    <button class="lang" type="button" (click)="i18n.toggle()" [attr.aria-label]="c.langLabel">
+      {{ c.langSwitch }}
+    </button>
+    <button
+      class="burger"
+      type="button"
+      [attr.aria-label]="menuOpen() ? c.menuClose : c.menuOpen"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="site-menu"
+      (click)="toggleMenu($event)"
+    >
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+
+  @if (menuOpen()) {
+    <div class="drawer" id="site-menu" (click)="$event.stopPropagation()">
+      @for (item of c.nav; track item.id) {
+        <a
+          [class.is-on]="isCurrent(item)"
+          [href]="item.href || '#' + item.id"
+          (click)="open($event, item)"
+        >{{ item.label }}</a>
+      }
+      @if (phone()) {
+        <a class="drawer__phone" [href]="phoneLink()"><bdi dir="ltr">{{ phone() }}</bdi></a>
+      }
+    </div>
+  }
+</header>

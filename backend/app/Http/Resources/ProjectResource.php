@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Support\StorageUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -24,7 +25,7 @@ class ProjectResource extends JsonResource
             'area' => $this->area,
             'year' => $this->year,
             'status' => $this->status,
-            'cover_image' => $this->cover_image,
+            'cover_image' => $this->coverUrl(),
             'is_featured' => $this->is_featured,
             'published_at' => $this->published_at,
             'category' => $this->whenLoaded('category' , fn () => new ProjectCategoryResource($this->category)),
@@ -33,5 +34,18 @@ class ProjectResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
+    }
+
+    private function coverUrl(): ?string
+    {
+        $cover = StorageUrl::public($this->cover_image);
+
+        if ($cover || !$this->relationLoaded('images')) {
+            return $cover;
+        }
+
+        $image = $this->images->sortBy('id')->first();
+
+        return $image ? StorageUrl::public($image->image_path) : null;
     }
 }

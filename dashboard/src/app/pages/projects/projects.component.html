@@ -1,0 +1,52 @@
+<div class="page-head">
+  <div>
+    <p class="kicker">الموقع العام</p>
+    <h1>المشاريع</h1>
+  </div>
+  <a class="btn" routerLink="/projects/new">مشروع جديد</a>
+</div>
+
+@if (error()) {
+  <p class="error">{{ error() }}</p>
+}
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>العنوان</th>
+        <th>التصنيف</th>
+        <th>الحالة</th>
+        <th>مميز</th>
+        <th>السنة</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of page()?.items ?? []; track item.id) {
+        <tr>
+          <td>{{ item.title }}</td>
+          <td>{{ item.category?.name || '—' }}</td>
+          <td><span class="pill">{{ statusLabel(item.status) }}</span></td>
+          <td><span class="pill" [class.pill--off]="!item.is_featured">{{ item.is_featured ? 'مميز' : 'عادي' }}</span></td>
+          <td dir="ltr">{{ item.year || '—' }}</td>
+          <td>
+            <div class="row-actions">
+              <a [routerLink]="['/projects', item.id]">تعديل</a>
+              <button type="button" (click)="remove(item)">حذف</button>
+            </div>
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="6">لا توجد مشاريع.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+@if ((page()?.meta?.last_page ?? 1) > 1) {
+  <div class="pager">
+    <button class="btn-quiet" type="button" [disabled]="page()!.meta!.current_page <= 1" (click)="load(page()!.meta!.current_page - 1)">السابق</button>
+    <button class="btn-quiet" type="button" [disabled]="page()!.meta!.current_page >= page()!.meta!.last_page" (click)="load(page()!.meta!.current_page + 1)">التالي</button>
+  </div>
+}

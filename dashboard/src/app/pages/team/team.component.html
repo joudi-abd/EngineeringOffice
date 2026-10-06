@@ -1,0 +1,39 @@
+<div class="page-head">
+  <div>
+    <p class="kicker">عن المكتب</p>
+    <h1>الفريق</h1>
+  </div>
+  <a class="btn" routerLink="/team/new">عضو جديد</a>
+</div>
+@if (error()) { <p class="error">{{ error() }}</p> }
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th></th><th>الاسم</th><th>المسمى</th><th>الحالة</th><th></th></tr>
+    </thead>
+    <tbody>
+      @for (item of page()?.items ?? []; track item.id) {
+        <tr>
+          <td>@if (item.image_url) { <img class="thumb" [src]="item.image_url" alt="" /> }</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.job_title }}</td>
+          <td><span class="pill" [class.pill--off]="!item.is_active">{{ item.is_active ? 'ظاهر' : 'مخفي' }}</span></td>
+          <td>
+            <div class="row-actions">
+              <a [routerLink]="['/team', item.id]">تعديل</a>
+              <button type="button" (click)="remove(item)">حذف</button>
+            </div>
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="5">لا يوجد أعضاء.</td></tr>
+      }
+    </tbody>
+  </table>
+</div>
+@if ((page()?.meta?.last_page ?? 1) > 1) {
+  <div class="pager">
+    <button class="btn-quiet" type="button" [disabled]="page()!.meta!.current_page <= 1" (click)="load(page()!.meta!.current_page - 1)">السابق</button>
+    <button class="btn-quiet" type="button" [disabled]="page()!.meta!.current_page >= page()!.meta!.last_page" (click)="load(page()!.meta!.current_page + 1)">التالي</button>
+  </div>
+}

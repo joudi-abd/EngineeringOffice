@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Support\StorageUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class ProjectImageResource extends JsonResource
 {
@@ -19,7 +19,7 @@ class ProjectImageResource extends JsonResource
             'id' => $this->id,
             'project_id' => $this->project_id,
             'image_path' => $this->image_path,
-            'image_url' => Storage::disk('public')->url($this->image_path),
+            'image_url' => StorageUrl::public($this->image_path),
             'alt_text' => $this->alt_text,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

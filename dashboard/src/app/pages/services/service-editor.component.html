@@ -1,0 +1,38 @@
+<a class="kicker" routerLink="/services">الخدمات</a>
+<div class="panel">
+  <h1>{{ id() ? 'تعديل الخدمة' : 'خدمة جديدة' }}</h1>
+  <form class="fields" [formGroup]="form" (ngSubmit)="save()">
+    <label>
+      <span>الاسم</span>
+      <input formControlName="name" />
+    </label>
+    <label>
+      <span>وصف قصير</span>
+      <textarea formControlName="short_description"></textarea>
+    </label>
+    <label>
+      <span>الوصف</span>
+      <textarea formControlName="description"></textarea>
+    </label>
+    <label>
+      <span>الأيقونة</span>
+      <input formControlName="icon" dir="ltr" />
+    </label>
+    @if (imageUrl()) {
+      <img class="thumb" [src]="imageUrl()!" alt="" />
+    }
+    <label>
+      <span>صورة {{ fileName() }}</span>
+      <input type="file" accept="image/*" (change)="onFile($event)" />
+    </label>
+    <label class="check">
+      <input type="checkbox" formControlName="is_active" />
+      <span>ظاهرة في الموقع</span>
+    </label>
+    @if (error()) { <p class="error">{{ error() }}</p> }
+    <div class="actions">
+      <button class="btn" type="submit" [disabled]="busy()">حفظ</button>
+      <a class="btn-quiet" routerLink="/services">رجوع</a>
+    </div>
+  </form>
+</div>

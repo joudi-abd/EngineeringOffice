@@ -1,105 +1,89 @@
-import { Component, HostListener } from '@angular/core';
-
-interface MenuLink {
-  label: string;
-  href: string;
-}
+import { Component, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { SiteApi } from '../../core/site-api.service';
+import { LanguageService } from '../../core/language.service';
+import { gmailHref, telHref, whatsappHref } from '../../core/site-content';
+import { SectionNav } from '../../core/section-nav';
 
 @Component({
   selector: 'app-home',
+  imports: [RouterLink],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  readonly aboutLinks: MenuLink[] = [
-    { label: 'The complex', href: '#about' },
-    { label: 'Architecture', href: '#architecture' },
-    { label: 'Location', href: '#location' },
-    { label: 'Amenities', href: '#amenities' },
-  ];
+  protected readonly i18n = inject(LanguageService);
+  protected readonly sections = inject(SectionNav);
+  protected readonly site = inject(SiteApi);
+  protected readonly services = computed(() => this.site.services());
+  protected readonly team = computed(() => this.site.team());
+  protected readonly featured = computed(() => this.site.projects().filter((item) => item.is_featured === true));
+  protected readonly phone = computed(() => this.site.setting('phone'));
+  protected readonly email = computed(() => this.site.setting('email'));
+  protected readonly address = computed(() => this.site.setting('address'));
+  protected readonly hours = computed(() => this.site.setting('hours'));
+  protected readonly phoneLink = computed(() => telHref(this.phone()));
+  protected readonly emailLink = computed(() => gmailHref(this.email()));
+  protected readonly whatsappLink = computed(() => {
+    const number = this.site.setting('whatsapp');
+    return number ? whatsappHref(number) : '';
+  });
 
-  readonly apartmentTypes = [
-    'Studio',
-    '1 Bedroom',
-    '2 Bedrooms',
-    '3 Bedrooms',
-    'Penthouse',
-  ];
+  protected readonly name = signal('');
+  protected readonly mail = signal('');
+  protected readonly phoneField = signal('');
+  protected readonly subject = signal('');
+  protected readonly message = signal('');
+  protected readonly error = signal('');
+  protected readonly sent = signal(false);
 
-  readonly stages = [
-    { index: '01', name: 'Foundations', state: 'Complete' },
-    { index: '02', name: 'Structure', state: 'In progress' },
-    { index: '03', name: 'Facade', state: 'Scheduled' },
-    { index: '04', name: 'Interiors', state: 'Scheduled' },
-  ];
-
-  aboutOpen = false;
-  apartmentsOpen = false;
-  menuOpen = false;
-  saved = false;
-  scrolled = false;
-  selectedType: string | null = null;
-
-  toggleAbout(event: Event): void {
-    event.stopPropagation();
-    this.aboutOpen = !this.aboutOpen;
-    this.apartmentsOpen = false;
+  constructor() {
+    this.site.load().subscribe();
   }
 
-  toggleApartments(event: Event): void {
-    event.stopPropagation();
-    this.apartmentsOpen = !this.apartmentsOpen;
-    this.aboutOpen = false;
+  protected scrollNext(): void {
+    this.sections.scrollTo('about');
   }
 
-  toggleMenu(event: Event): void {
-    event.stopPropagation();
-    this.menuOpen = !this.menuOpen;
-    this.aboutOpen = false;
-    this.apartmentsOpen = false;
+  protected setField(field: 'name' | 'mail' | 'phone' | 'subject' | 'message', event: Event): void {
+    const value = (event.target as HTMLInputElement | HTMLTextAreaElement).value;
+    if (field === 'name') this.name.set(value);
+    if (field === 'mail') this.mail.set(value);
+    if (field === 'phone') this.phoneField.set(value);
+    if (field === 'subject') this.subject.set(value);
+    if (field === 'message') this.message.set(value);
+    this.error.set('');
   }
 
-  toggleSaved(): void {
-    this.saved = !this.saved;
-  }
-
-  chooseApartment(type: string): void {
-    this.selectedType = type;
-    this.apartmentsOpen = false;
-    this.menuOpen = false;
-  }
-
-  follow(event: Event, href: string): void {
+  protected submit(event: Event): void {
     event.preventDefault();
-    this.aboutOpen = false;
-    this.apartmentsOpen = false;
-    this.menuOpen = false;
-    document.getElementById(href.slice(1))?.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  closeOverlays(): void {
-    this.aboutOpen = false;
-    this.apartmentsOpen = false;
-    this.menuOpen = false;
-  }
-
-  scrollNext(): void {
-    document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  @HostListener('document:click')
-  onDocumentClick(): void {
-    this.aboutOpen = false;
-    this.apartmentsOpen = false;
-  }
-
-  @HostListener('document:keydown.escape')
-  onEscape(): void {
-    this.closeOverlays();
-  }
-
-  @HostListener('window:scroll')
-  onWindowScroll(): void {
-    this.scrolled = window.scrollY > 24;
+    const form = this.i18n.content().contact;
+    const name = this.name().trim();
+    const email = this.mail().trim();
+    const subject = this.subject().trim();
+    const message = this.message().trim();
+    const phone = this.phoneField().trim();
+    if (!name || !email || !subject || !message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      this.error.set(form.invalid);
+      return;
+    }
+    this.site.sendMessage({
+      name,
+      email,
+      phone: phone || null,
+      subject,
+      message,
+    }).subscribe({
+      next: () => {
+        this.sent.set(true);
+        this.name.set('');
+        this.mail.set('');
+        this.phoneField.set('');
+        this.subject.set('');
+        this.message.set('');
+        this.error.set('');
+      },
+      error: () => this.error.set(form.failed),
+    });
   }
 }

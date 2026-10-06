@@ -1,0 +1,19 @@
+<a class="kicker" routerLink="/messages">الرسائل</a>
+@if (item(); as message) {
+  <div class="panel">
+    <h1>{{ message.subject }}</h1>
+    <p class="muted" style="margin-top: 10px">{{ message.name }} · <span dir="ltr">{{ message.email }}</span></p>
+    @if (message.phone) { <p class="muted" dir="ltr">{{ message.phone }}</p> }
+    <p class="muted">{{ message.created_at | date:'yyyy-MM-dd HH:mm' }}</p>
+    <p style="margin-top: 22px; line-height: 1.8">{{ message.message }}</p>
+    @if (error()) { <p class="error">{{ error() }}</p> }
+    <div class="actions">
+      @if (message.status === 'new') {
+        <button class="btn" type="button" (click)="mark('read')">تعليم كمقروءة</button>
+      } @else {
+        <button class="btn-quiet" type="button" (click)="mark('new')">إرجاعها جديدة</button>
+      }
+      <button class="btn-danger" type="button" (click)="remove()">حذف</button>
+    </div>
+  </div>
+}

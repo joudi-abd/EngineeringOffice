@@ -1,0 +1,203 @@
+<main id="top" class="page" tabindex="-1">
+  @let detail = i18n.content().projectsPage.detail;
+
+  @if (record(); as project) {
+    <article>
+      <p class="back">
+        <a class="text-link" routerLink="/projects">{{ detail.back }}</a>
+      </p>
+
+      @for (group of mosaic(); track group[0].id) {
+        <ul class="mosaic">
+          @for (image of group; track image.id; let first = $first) {
+            <li [class.mosaic__lead]="first">
+              <button type="button" [attr.aria-label]="detail.galleryEyebrow" (click)="openImage(image.index ?? 0)">
+                <img [src]="image.src" [alt]="image.alt" />
+              </button>
+            </li>
+          }
+        </ul>
+      }
+
+      @if (viewer() !== null) {
+        <div
+          class="viewer"
+          role="dialog"
+          aria-modal="true"
+          [attr.aria-label]="detail.galleryEyebrow"
+          (click)="closeViewer()"
+          (touchstart)="touchStart($event)"
+          (touchend)="touchEnd($event)"
+        >
+          <button class="viewer__close" type="button" [attr.aria-label]="detail.close" (click)="closeViewer()">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+          @if (gallery().length > 1) {
+            <button class="viewer__nav viewer__nav--right" type="button" [attr.aria-label]="detail.previous" (click)="step($event, -1)">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
+            </button>
+            <button class="viewer__nav viewer__nav--left" type="button" [attr.aria-label]="detail.next" (click)="step($event, 1)">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5.5 8.5 12 15 18.5"/></svg>
+            </button>
+          }
+          <img [src]="current().src" [alt]="current().alt" (click)="$event.stopPropagation()" />
+        </div>
+      }
+
+      <header class="intro">
+        @if (project.category) {
+          <p class="kicker">{{ project.category.name }}</p>
+        }
+        <h1 class="display">{{ project.title }}</h1>
+        <p class="quiet lede">{{ project.short_description }}</p>
+        <dl>
+          @if (project.location) {
+            <div>
+              <dt>{{ detail.locationLabel }}</dt>
+              <dd>{{ project.location }}</dd>
+            </div>
+          }
+          @if (project.year) {
+            <div>
+              <dt>{{ detail.yearLabel }}</dt>
+              <dd><bdi dir="ltr">{{ project.year }}</bdi></dd>
+            </div>
+          }
+          @if (project.area) {
+            <div>
+              <dt>{{ detail.areaLabel }}</dt>
+              <dd><bdi dir="ltr">{{ project.area }}</bdi> {{ detail.areaUnit }}</dd>
+            </div>
+          }
+        </dl>
+      </header>
+
+      <section class="copy">
+        @for (paragraph of copy(); track paragraph) {
+          <p class="quiet">{{ paragraph }}</p>
+        }
+      </section>
+
+      @if (project.services.length) {
+        <section class="services" aria-labelledby="project-services-title">
+          <p class="kicker">{{ detail.servicesEyebrow }}</p>
+          <h2 class="display" id="project-services-title">{{ detail.servicesTitle }}</h2>
+          <ul>
+            @for (service of project.services; track service.id) {
+              <li>{{ service.name }}</li>
+            }
+          </ul>
+        </section>
+      }
+
+      <section class="reviews" aria-labelledby="reviews-title">
+        <p class="kicker">{{ detail.reviewsEyebrow }}</p>
+        <h2 class="display" id="reviews-title">{{ detail.reviewsTitle }}</h2>
+
+        @if (reviews().length === 0) {
+          <p class="quiet">{{ detail.reviewsEmpty }}</p>
+        } @else {
+          <ol>
+            @for (review of reviews(); track review.id) {
+              <li class="comment">
+                <div class="comment__top">
+                  <p class="comment__person">
+                    <span class="avatar" aria-hidden="true">
+                      <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="8" r="3.1" />
+                        <path d="M5.6 19.2c1.1-2.9 3.3-4.3 6.4-4.3s5.3 1.4 6.4 4.3" />
+                      </svg>
+                    </span>
+                    <span>{{ review.client_name }}</span>
+                  </p>
+                  <p class="stars" [attr.aria-label]="review.rating + ' / 5'">
+                    @for (star of stars; track star) {
+                      <svg viewBox="0 0 20 20" [class.is-on]="star <= review.rating" aria-hidden="true">
+                        <path d="M10 2.2 12.1 7.2l5.5.5-4.2 3.6 1.3 5.3L10 13.8 5.3 16.6l1.3-5.3L2.4 7.7l5.5-.5z" />
+                      </svg>
+                    }
+                  </p>
+                </div>
+                <p class="quiet">{{ review.content }}</p>
+              </li>
+            }
+          </ol>
+        }
+
+        <p class="rate-label">{{ detail.rateLabel }}</p>
+        <div class="rate" role="radiogroup" [attr.aria-label]="detail.rateLabel">
+          @for (star of stars; track star) {
+            <button
+              type="button"
+              role="radio"
+              [attr.aria-checked]="rating() === star"
+              [attr.aria-label]="star + ' / 5'"
+              [class.is-on]="star <= rating()"
+              (click)="choose(star)"
+            >
+              <svg viewBox="0 0 20 20" aria-hidden="true">
+                <path d="M10 2.2 12.1 7.2l5.5.5-4.2 3.6 1.3 5.3L10 13.8 5.3 16.6l1.3-5.3L2.4 7.7l5.5-.5z" />
+              </svg>
+            </button>
+          }
+        </div>
+        @if (thanks()) {
+          <p class="thanks">{{ detail.thanks }}</p>
+        }
+      </section>
+
+      <dialog #reviewDialog class="sheet" (close)="onDialogClose()" (click)="onBackdrop($event)">
+        <form (submit)="submit($event)">
+          <h2>{{ detail.dialogTitle }}</h2>
+          <div class="rate" role="radiogroup" [attr.aria-label]="detail.rateLabel">
+            @for (star of stars; track star) {
+              <button
+                type="button"
+                role="radio"
+                [attr.aria-checked]="rating() === star"
+                [attr.aria-label]="star + ' / 5'"
+                [class.is-on]="star <= rating()"
+                (click)="rating.set(star)"
+              >
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M10 2.2 12.1 7.2l5.5.5-4.2 3.6 1.3 5.3L10 13.8 5.3 16.6l1.3-5.3L2.4 7.7l5.5-.5z" />
+                </svg>
+              </button>
+            }
+          </div>
+          <label>
+            <span>{{ detail.name }}</span>
+            <input [value]="name()" (input)="setField('name', $event)" autocomplete="name" required />
+          </label>
+          <label>
+            <span>{{ detail.email }}</span>
+            <input type="email" dir="ltr" [value]="email()" (input)="setField('email', $event)" autocomplete="email" required />
+          </label>
+          <label>
+            <span>{{ detail.review }}</span>
+            <textarea rows="4" [value]="text()" (input)="setField('text', $event)" required></textarea>
+          </label>
+          <label class="consent">
+            <input type="checkbox" [checked]="consent()" (change)="setConsent($event)" />
+            <span>{{ detail.consent }}</span>
+          </label>
+          @if (error()) {
+            <p class="error">{{ error() }}</p>
+          }
+          <div class="actions">
+            <button class="send" type="submit">{{ detail.send }}</button>
+            <button class="text-link dismiss" type="button" (click)="closeDialog()">{{ detail.close }}</button>
+          </div>
+        </form>
+      </dialog>
+    </article>
+  } @else if (status() === 'loading') {
+    <header class="intro missing"></header>
+  } @else {
+    <header class="intro missing">
+      <h1 class="display">{{ detail.missingTitle }}</h1>
+      <p class="quiet lede">{{ detail.missing }}</p>
+      <a class="text-link" routerLink="/projects">{{ detail.back }}</a>
+    </header>
+  }
+</main>

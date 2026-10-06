@@ -1,0 +1,114 @@
+<a class="kicker" routerLink="/projects">المشاريع</a>
+<div class="panel">
+  <h1>{{ id() ? 'تعديل المشروع' : 'مشروع جديد' }}</h1>
+  <form class="fields" [formGroup]="form" (ngSubmit)="save()">
+    <div class="grid-2">
+      <label>
+        <span>التصنيف</span>
+        <select formControlName="category_id">
+          <option value="">اختر تصنيفاً</option>
+          @for (category of categories(); track category.id) {
+            <option [value]="category.id">{{ category.name }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        <span>الحالة</span>
+        <select formControlName="status">
+          <option value="planning">تخطيط</option>
+          <option value="in_progress">قيد التنفيذ</option>
+          <option value="completed">مكتمل</option>
+        </select>
+      </label>
+    </div>
+    <label>
+      <span>العنوان</span>
+      <input formControlName="title" />
+    </label>
+    <label>
+      <span>وصف قصير</span>
+      <textarea formControlName="short_description"></textarea>
+    </label>
+    <label>
+      <span>الوصف</span>
+      <textarea formControlName="description"></textarea>
+    </label>
+    <div class="grid-2">
+      <label>
+        <span>المكان</span>
+        <input formControlName="location" />
+      </label>
+      <label>
+        <span>المساحة</span>
+        <input type="number" formControlName="area" dir="ltr" min="0" step="0.01" />
+      </label>
+      <label>
+        <span>السنة</span>
+        <input type="number" formControlName="year" dir="ltr" />
+      </label>
+      <label>
+        <span>تاريخ النشر</span>
+        <input type="date" formControlName="published_at" dir="ltr" />
+      </label>
+    </div>
+    <label class="check">
+      <input type="checkbox" formControlName="is_featured" />
+      <span>مشروع مميز في الصفحة الرئيسية</span>
+    </label>
+    <div>
+      <span class="muted">الخدمات المرتبطة</span>
+      <div class="checks" style="margin-top: 10px">
+        @for (service of services(); track service.id) {
+          <label class="check">
+            <input type="checkbox" [checked]="chosen(service.id)" (change)="toggleService(service.id, $any($event.target).checked)" />
+            <span>{{ service.name }}</span>
+          </label>
+        }
+      </div>
+    </div>
+    <label>
+      <span>صورة الغلاف {{ coverName() }}</span>
+      <input type="file" accept="image/*" (change)="onCover($event)" />
+    </label>
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+    @if (note()) {
+      <p class="note">{{ note() }}</p>
+    }
+    <div class="actions">
+      <button class="btn" type="submit" [disabled]="busy()">حفظ</button>
+      <a class="btn-quiet" routerLink="/projects">رجوع</a>
+    </div>
+  </form>
+</div>
+
+@if (id()) {
+  <div class="panel" style="margin-top: 18px">
+    <h1>صور المشروع</h1>
+    <div class="gallery">
+      @for (image of images(); track image.id) {
+        <figure>
+          <img [src]="image.image_url || ''" [alt]="image.alt_text || ''" />
+          <figcaption>
+            <span>{{ image.alt_text || 'بدون وصف' }}</span>
+            <button type="button" (click)="removeImage(image)">حذف</button>
+          </figcaption>
+        </figure>
+      }
+    </div>
+    <div class="fields" [formGroup]="form">
+      <label>
+        <span>صورة جديدة {{ galleryName() }}</span>
+        <input type="file" accept="image/*" (change)="onGallery($event)" />
+      </label>
+      <label>
+        <span>النص البديل</span>
+        <input formControlName="alt_text" />
+      </label>
+    </div>
+    <div class="actions">
+      <button class="btn" type="button" (click)="uploadImage()">رفع الصورة</button>
+    </div>
+  </div>
+}

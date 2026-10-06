@@ -23,8 +23,15 @@ class UpdateSettingRequest extends FormRequest
      */
     public function rules(): array
     {
+        if ($this->route('key') === 'logo' && $this->hasFile('value')) {
+            return [
+                'value' => ['nullable', 'image', 'max:5120', 'mimes:jpeg,png,jpg,webp'],
+                'type' => ['sometimes', 'string', Rule::in(['string', 'integer', 'boolean', 'json', 'array', 'text', 'url'])],
+            ];
+        }
+
         return [
-            'value' => ['nullable', 'string', 'max:255'],
+            'value' => ['nullable', 'string', 'max:5000'],
             'type' => ['sometimes', 'string', Rule::in(['string', 'integer', 'boolean', 'json', 'array', 'text', 'url'])],
         ];
     }

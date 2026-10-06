@@ -1,0 +1,21 @@
+<main class="login">
+  <app-theme-toggle class="login__theme" />
+  <form class="login__card" [formGroup]="form" (ngSubmit)="submit()">
+    <p class="login__mark">UFUQ</p>
+    <h1>لوحة التحكم</h1>
+    <div class="fields">
+      <label>
+        <span>البريد الإلكتروني</span>
+        <input type="email" formControlName="email" autocomplete="username" dir="ltr" />
+      </label>
+      <label>
+        <span>كلمة المرور</span>
+        <input type="password" formControlName="password" autocomplete="current-password" dir="ltr" />
+      </label>
+    </div>
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+    <button class="login__submit" type="submit" [disabled]="busy()">{{ busy() ? 'جارٍ الدخول' : 'دخول' }}</button>
+  </form>
+</main>

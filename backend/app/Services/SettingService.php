@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Models\Setting;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class SettingService
 {
@@ -27,14 +29,37 @@ class SettingService
         array $data
     ): Setting {
         return DB::transaction(function () use ($key, $data) {
-
             $setting = Setting::query()
                 ->where('key', $key)
                 ->firstOrFail();
 
-            $setting->update($data);
+            $previous = $setting->value;
+            $storedLogo = null;
 
-            return $setting->refresh();
+            if (($data['value'] ?? null) instanceof UploadedFile) {
+                $storedLogo = $data['value']->store('settings', 'public');
+                $data['value'] = $storedLogo;
+                $data['type'] = 'string';
+            } elseif ($key === 'logo' && ($data['value'] ?? null) === '') {
+                $data['value'] = null;
+            }
+
+            try {
+                $setting->update($data);
+            } catch (\Throwable $error) {
+                if ($storedLogo) {
+                    Storage::disk('public')->delete($storedLogo);
+                }
+                throw $error;
+            }
+
+            $setting->refresh();
+
+            if ($key === 'logo' && $previous && $previous !== $setting->value && !str_starts_with((string) $previous, 'http')) {
+                Storage::disk('public')->delete($previous);
+            }
+
+            return $setting;
         });
     }
 
@@ -47,6 +72,8 @@ class SettingService
                 'phone',
                 'email',
                 'address',
+                'whatsapp',
+                'hours',
                 'facebook',
                 'instagram',
                 'linkedin',

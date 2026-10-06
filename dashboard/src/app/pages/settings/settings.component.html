@@ -1,0 +1,119 @@
+<div class="page-head">
+  <div>
+    <p class="kicker">المكتب</p>
+    <h1>الإعدادات</h1>
+  </div>
+  <button class="btn" type="button" (click)="save()" [disabled]="busy() || !ready()">{{ busy() ? 'جارٍ الحفظ' : 'حفظ' }}</button>
+</div>
+
+@if (error()) { <p class="error">{{ error() }}</p> }
+@if (saved()) { <p class="note">{{ saved() }}</p> }
+
+<div class="settings">
+  <section class="panel">
+    <h2>المكتب</h2>
+    <div class="settings__office">
+      <div class="logo-pick">
+        <span>شعار المكتب</span>
+        <div class="logo-pick__frame">
+          @if (logoPreview()) {
+            <img [src]="logoPreview()" alt="" />
+          } @else {
+            <span>لا توجد صورة</span>
+          }
+        </div>
+        <div class="logo-pick__actions">
+          <label class="btn-quiet">
+            اختيار صورة
+            <input #logoInput type="file" accept="image/jpeg,image/png,image/webp" (change)="chooseLogo($event)" />
+          </label>
+          @if (logoPreview()) {
+            <button class="btn-quiet" type="button" (click)="clearLogo(logoInput)">إزالة</button>
+          }
+        </div>
+      </div>
+      <div class="fields">
+        <label>
+          <span>اسم المكتب</span>
+          <input [value]="value('company_name')" (input)="setValue('company_name', $event)" />
+        </label>
+        <label>
+          <span>نبذة عن المكتب</span>
+          <textarea rows="4" [value]="value('company_description')" (input)="setValue('company_description', $event)"></textarea>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>التواصل</h2>
+    <div class="fields settings__contact">
+        <label>
+          <span>الهاتف</span>
+          <input type="tel" dir="ltr" [value]="value('phone')" (input)="setValue('phone', $event)" />
+        </label>
+        <label>
+          <span>البريد الإلكتروني</span>
+          <input type="email" dir="ltr" [value]="value('email')" (input)="setValue('email', $event)" />
+        </label>
+        <label>
+          <span>واتساب</span>
+          <input type="tel" dir="ltr" [value]="value('whatsapp')" (input)="setValue('whatsapp', $event)" />
+        </label>
+        <label>
+          <span>العنوان</span>
+          <input [value]="value('address')" (input)="setValue('address', $event)" />
+        </label>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>مدة العمل</h2>
+      <div class="hours">
+        <label>
+          <span>الأيام</span>
+          <select [value]="days()" (change)="setDays($event)">
+            @for (option of dayOptions; track option) {
+              <option [value]="option">{{ option }}</option>
+            }
+            <option value="custom">أيام أخرى</option>
+          </select>
+        </label>
+        <label>
+          <span>من</span>
+          <input type="time" dir="ltr" [value]="from()" (input)="setTime('from', $event)" />
+        </label>
+        <label>
+          <span>إلى</span>
+          <input type="time" dir="ltr" [value]="to()" (input)="setTime('to', $event)" />
+        </label>
+      </div>
+      @if (days() === 'custom') {
+        <label class="hours__custom">
+          <span>الأيام</span>
+          <input [value]="customDays()" (input)="setCustomDays($event)" />
+        </label>
+      }
+    @if (showHours() && hoursLabel()) {
+      <p class="muted hours__preview">يظهر في الموقع: {{ hoursLabel() }}</p>
+    }
+  </section>
+
+  <section class="panel">
+    <h2>الحسابات</h2>
+    <div class="fields settings__links">
+      <label>
+        <span>فيسبوك</span>
+        <input type="url" dir="ltr" [value]="value('facebook')" (input)="setValue('facebook', $event)" />
+      </label>
+      <label>
+        <span>إنستغرام</span>
+        <input type="url" dir="ltr" [value]="value('instagram')" (input)="setValue('instagram', $event)" />
+      </label>
+      <label>
+        <span>لينكدإن</span>
+        <input type="url" dir="ltr" [value]="value('linkedin')" (input)="setValue('linkedin', $event)" />
+      </label>
+    </div>
+  </section>
+</div>

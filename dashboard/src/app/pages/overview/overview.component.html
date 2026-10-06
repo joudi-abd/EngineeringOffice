@@ -1,0 +1,91 @@
+<div class="page-head">
+  <div>
+    <p class="kicker">أفق إمبريوم</p>
+    <h1>نظرة عامة</h1>
+  </div>
+</div>
+
+<div class="cards">
+  <a class="card" routerLink="/projects">
+    <span>المشاريع</span>
+    <strong>{{ projects() ?? '—' }}</strong>
+  </a>
+  <a class="card" routerLink="/messages">
+    <span>الرسائل</span>
+    <strong>{{ messages() ?? '—' }}</strong>
+  </a>
+  <a class="card" routerLink="/messages">
+    <span>غير مقروءة</span>
+    <strong>{{ unread() ?? '—' }}</strong>
+  </a>
+  <a class="card" routerLink="/testimonials">
+    <span>الآراء</span>
+    <strong>{{ reviews() ?? '—' }}</strong>
+  </a>
+</div>
+
+<div class="charts">
+  <section class="panel chart">
+    <h2>حالة المشاريع</h2>
+    <div class="chart__body">
+      <svg class="donut" viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="donut__track" cx="60" cy="60" r="54" />
+        @for (part of statusRing().parts; track part.label) {
+          <circle
+            [class]="'slice slice--' + part.tone"
+            cx="60"
+            cy="60"
+            r="54"
+            [attr.stroke-dasharray]="part.dash"
+            [attr.stroke-dashoffset]="part.offset"
+          />
+        }
+        <text x="60" y="66">{{ statusRing().total }}</text>
+      </svg>
+      <ul class="legend">
+        @for (part of statusSlices(); track part.label) {
+          <li>
+            <i [class]="'swatch swatch--' + part.tone"></i>
+            <span>{{ part.label }}</span>
+            <strong>{{ part.value }}</strong>
+          </li>
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="panel chart">
+    <h2>تقييم الآراء</h2>
+    <ol class="bars">
+      @for (bar of ratingBars(); track bar.stars) {
+        <li>
+          <span class="bars__value">{{ bar.count }}</span>
+          <span class="bars__col">
+            <span class="bars__fill" [style.height.%]="bar.percent"></span>
+          </span>
+          <span class="bars__label">{{ bar.stars }}</span>
+        </li>
+      }
+    </ol>
+  </section>
+
+  <section class="panel chart">
+    <h2>الرسائل</h2>
+    <div class="meter" [class.meter--empty]="messages() === 0">
+      <span class="meter__new" [style.flex]="unread() || 0"></span>
+      <span class="meter__read" [style.flex]="readMessages()"></span>
+    </div>
+    <ul class="legend">
+      <li>
+        <i class="swatch swatch--done"></i>
+        <span>جديدة</span>
+        <strong>{{ unread() ?? '—' }}</strong>
+      </li>
+      <li>
+        <i class="swatch swatch--plan"></i>
+        <span>مقروءة</span>
+        <strong>{{ messages() === null ? '—' : readMessages() }}</strong>
+      </li>
+    </ul>
+  </section>
+</div>
