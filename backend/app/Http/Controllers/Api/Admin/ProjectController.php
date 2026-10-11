@@ -47,7 +47,6 @@ class ProjectController extends Controller
     {
         $project->load([
             'category',
-            'images',
             'services',
         ]);
 

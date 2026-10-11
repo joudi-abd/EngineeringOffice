@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Project;
 
+use App\Support\ProjectMediaRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProjectCoverRequest extends FormRequest
@@ -14,12 +15,7 @@ class StoreProjectCoverRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cover' => [
-                'required',
-                'image',
-                'mimes:jpg,jpeg,png,webp',
-                'max:5120',
-            ],
+            'cover' => ProjectMediaRules::image(),
         ];
     }
 
@@ -27,9 +23,7 @@ class StoreProjectCoverRequest extends FormRequest
     {
         return [
             'cover.required' => 'يجب اختيار صورة لغلاف المشروع.',
-            'cover.image' => 'الملف المرفوع يجب أن يكون صورة.',
-            'cover.mimes' => 'صيغة الصورة يجب أن تكون JPG أو JPEG أو PNG أو WebP.',
-            'cover.max' => 'حجم صورة الغلاف يجب ألا يتجاوز 5 ميغابايت.',
+            ...ProjectMediaRules::imageMessages('cover'),
         ];
     }
 }

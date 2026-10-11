@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Project;
 
+use App\Support\ProjectMediaRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProjectVideoRequest extends FormRequest
@@ -21,12 +22,7 @@ class StoreProjectVideoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'video' => [
-                'required',
-                'file',
-                'mimes:mp4,webm,mov',
-                'max:102400',
-            ],
+            'video' => ProjectMediaRules::video(),
 
             'title' => [
                 'nullable',
@@ -49,9 +45,7 @@ class StoreProjectVideoRequest extends FormRequest
     {
         return [
             'video.required' => 'يجب اختيار فيديو للمشروع.',
-            'video.file' => 'الملف المرفوع يجب أن يكون ملفاً صالحاً.',
-            'video.mimes' => 'صيغة الفيديو يجب أن تكون MP4 أو WebM أو MOV.',
-            'video.max' => 'حجم الفيديو يجب ألا يتجاوز 100 ميغابايت.',
+            ...ProjectMediaRules::videoMessages('video'),
 
             'title.string' => 'عنوان الفيديو يجب أن يكون نصاً.',
             'title.max' => 'عنوان الفيديو يجب ألا يتجاوز 150 حرفاً.',

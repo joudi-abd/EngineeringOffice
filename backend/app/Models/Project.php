@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\ProjectMediaRules;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -60,22 +61,18 @@ class Project extends Model implements HasMedia
     {
         $this->addMediaCollection('cover_image')
             ->singleFile()
-            ->useDisk('public');
+            ->useDisk('public')
+            ->acceptsMimeTypes(ProjectMediaRules::IMAGE_MIME_TYPES)
+            ->acceptsFile(ProjectMediaRules::acceptsImage(...));
 
         $this->addMediaCollection('gallery')
             ->useDisk('public')
-            ->acceptsMimeTypes([
-                'image/jpeg',
-                'image/png',
-                'image/webp',
-            ]);
+            ->acceptsMimeTypes(ProjectMediaRules::IMAGE_MIME_TYPES)
+            ->acceptsFile(ProjectMediaRules::acceptsImage(...));
 
         $this->addMediaCollection('videos')
             ->useDisk('public')
-            ->acceptsMimeTypes([
-                'video/mp4',
-                'video/webm',
-                'video/quicktime',
-            ]);
+            ->acceptsMimeTypes(ProjectMediaRules::VIDEO_MIME_TYPES)
+            ->acceptsFile(ProjectMediaRules::acceptsVideo(...));
     }
 }

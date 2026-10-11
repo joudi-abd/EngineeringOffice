@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Project;
 
+use App\Support\ProjectMediaRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreProjectGalleryImageRequest extends FormRequest
@@ -14,12 +15,7 @@ class StoreProjectGalleryImageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'image' => [
-                'required',
-                'image',
-                'mimes:jpg,jpeg,png,webp',
-                'max:5120',
-            ],
+            'image' => ProjectMediaRules::image(),
 
             'title' => [
                 'nullable',
@@ -39,9 +35,7 @@ class StoreProjectGalleryImageRequest extends FormRequest
     {
         return [
             'image.required' => 'الصورة مطلوبة.',
-            'image.image' => 'يجب أن يكون الملف صورة.',
-            'image.mimes' => 'يُسمح بصيغ JPG وJPEG وPNG وWEBP فقط.',
-            'image.max' => 'يجب ألا يتجاوز حجم الصورة 5 ميغابايت.',
+            ...ProjectMediaRules::imageMessages('image'),
 
             'title.string' => 'عنوان الصورة يجب أن يكون نصاً.',
             'title.max' => 'عنوان الصورة يجب ألا يتجاوز 150 حرفاً.',
