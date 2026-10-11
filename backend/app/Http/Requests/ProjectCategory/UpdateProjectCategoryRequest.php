@@ -25,7 +25,7 @@ class UpdateProjectCategoryRequest extends FormRequest
     {
         return [
             'name' => ['sometimes', 'string', 'max:255'],
-            'slug' => ['sometimes', 'string', 'max:255', Rule::unique('project_categories', 'slug')->ignore($this->route('project_category')?->id)],
+            'slug' => ['sometimes', 'string', 'max:255', Rule::unique('project_categories', 'slug')->ignore($this->route('category')?->id)],
             'description' => ['nullable', 'string'],
             'is_active' => ['sometimes', 'boolean'],
         ];

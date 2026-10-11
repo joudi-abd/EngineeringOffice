@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\ProjectCategoryController as AdminProjectCategoryController;
+use App\Http\Controllers\Api\Admin\ProjectCoverController;
+use App\Http\Controllers\Api\Admin\ProjectGalleryImageController;
 use App\Http\Controllers\Api\Public\ProjectCategoryController as PublicProjectCategoryController;
 use App\Http\Controllers\Api\Public\ProjectController as PublicProjectController;
 use App\Http\Controllers\Api\Admin\ProjectController as AdminProjectController;
-use App\Http\Controllers\Api\Admin\ProjectImageController;
+use App\Http\Controllers\Api\Public\ProjectMediaController;
 use App\Http\Controllers\Api\Public\ServiceController as PublicServiceController;
 use App\Http\Controllers\Api\Admin\ServiceController as AdminServiceController;
 use App\Http\Controllers\Api\Admin\TeamMemberController as AdminTeamMemberController;
@@ -15,6 +17,7 @@ use App\Http\Controllers\Api\Public\ContactMessageController as PublicContactMes
 use App\Http\Controllers\Api\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Api\Public\SettingController as PublicSettingController;
 use App\Http\Controllers\Api\Admin\SettingController as AdminSettingController;
+use App\Http\Controllers\Api\Admin\ProjectVideoController;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Route;
@@ -50,11 +53,7 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::patch('/projects/{project}' , [AdminProjectController::class, 'update'])->middleware('permission:projects.update');
     Route::delete('/projects/{project}' , [AdminProjectController::class, 'destroy'])->middleware('permission:projects.delete');
 
-    Route::scopeBindings()->group(function () {
-        Route::get('/projects/{project}/images' , [ProjectImageController::class , 'index'])->middleware('permission:projects.view');
-        Route::post('/projects/{project}/images' , [ProjectImageController::class , 'store'])->middleware('permission:projects.update');
-        Route::delete('/projects/{project}/images/{image}' , [ProjectImageController::class , 'destroy'])->middleware('permission:projects.update');
-    });
+
 
     Route::get('/services' , [AdminServiceController::class, 'index'])->middleware('permission:services.view');
     Route::post('/services' , [AdminServiceController::class, 'store'])->middleware('permission:services.create');
@@ -86,6 +85,26 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::get('/settings/{key}' , [AdminSettingController::class, 'show'])->middleware('permission:settings.view');
     Route::put('/settings/{key}' , [AdminSettingController::class, 'update'])->middleware('permission:settings.update');
     Route::patch('/settings/{key}' , [AdminSettingController::class, 'update'])->middleware('permission:settings.update');
+
+    Route::scopeBindings()->group(function () {
+        Route::get('/projects/{project}/videos' , [ProjectVideoController::class , 'index'])->middleware('permission:projects.view');
+        Route::post('/projects/{project}/videos' , [ProjectVideoController::class , 'store'])->middleware('permission:projects.update');
+        Route::get('/projects/{project}/videos/{video}' , [ProjectVideoController::class , 'show'])->middleware('permission:projects.view');
+        Route::put('/projects/{project}/videos/{video}' , [ProjectVideoController::class , 'update'])->middleware('permission:projects.update');
+        Route::patch('/projects/{project}/videos/{video}' , [ProjectVideoController::class , 'update'])->middleware('permission:projects.update');
+        Route::delete('/projects/{project}/videos/{video}' , [ProjectVideoController::class , 'destroy'])->middleware('permission:projects.update');
+    });
+
+    Route::get('projects/{project}/cover' , [ProjectCoverController::class , 'show'])->middleware('permission:projects.view');
+    Route::post('projects/{project}/cover' , [ProjectCoverController::class , 'store'])->middleware('permission:projects.update');
+    Route::delete('projects/{project}/cover' , [ProjectCoverController::class , 'destroy'])->middleware('permission:projects.update');
+
+    Route::get('/projects/{project}/gallery' , [ProjectGalleryImageController::class , 'index'])->middleware('permission:projects.view');
+    Route::post('/projects/{project}/gallery' , [ProjectGalleryImageController::class , 'store'])->middleware('permission:projects.update');
+    Route::get('/projects/{project}/gallery/{image}' , [ProjectGalleryImageController::class , 'show'])->middleware('permission:projects.view');
+    Route::put('/projects/{project}/gallery/{image}' , [ProjectGalleryImageController::class , 'update'])->middleware('permission:projects.update');
+    Route::patch('/projects/{project}/gallery/{image}' , [ProjectGalleryImageController::class , 'update'])->middleware('permission:projects.update');
+    Route::delete('/projects/{project}/gallery/{image}' , [ProjectGalleryImageController::class , 'destroy'])->middleware('permission:projects.update');
 });
 
 Route::get('/categories' , [PublicProjectCategoryController::class , 'index']);
@@ -93,6 +112,10 @@ Route::get('/categories/{slug}' , [PublicProjectCategoryController::class , 'sho
 
 Route::get('/projects' , [PublicProjectController::class , 'index']);
 Route::get('/projects/{slug}' , [PublicProjectController::class , 'show']);
+
+Route::get('/projects/{slug}/cover' , [ProjectMediaController::class , 'cover']);
+Route::get('/projects/{slug}/gallery' , [ProjectMediaController::class , 'gallery']);
+Route::get('/projects/{slug}/videos' , [ProjectMediaController::class , 'videos']);
 
 Route::get('/services' , [PublicServiceController::class , 'index']);
 Route::get('/services/{slug}' , [PublicServiceController::class , 'show']);

@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Project extends Model
+class Project extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
         'category_id',
@@ -22,7 +24,6 @@ class Project extends Model
         'area',
         'year',
         'status',
-        'cover_image',
         'is_featured',
         'published_at',
     ];
@@ -42,10 +43,6 @@ class Project extends Model
         return $this->belongsTo(ProjectCategory::class, 'category_id');
     }
 
-    public function images(): HasMany
-    {
-        return $this->hasMany(ProjectImage::class);
-    }
 
     public function services(): BelongsToMany
     {
@@ -57,5 +54,28 @@ class Project extends Model
     public function testimonials(): HasMany
     {
         return $this->hasMany(Testimonial::class);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('cover_image')
+            ->singleFile()
+            ->useDisk('public');
+
+        $this->addMediaCollection('gallery')
+            ->useDisk('public')
+            ->acceptsMimeTypes([
+                'image/jpeg',
+                'image/png',
+                'image/webp',
+            ]);
+
+        $this->addMediaCollection('videos')
+            ->useDisk('public')
+            ->acceptsMimeTypes([
+                'video/mp4',
+                'video/webm',
+                'video/quicktime',
+            ]);
     }
 }
