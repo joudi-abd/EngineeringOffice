@@ -17,7 +17,6 @@ class ProjectService
     ): Collection {
         return Project::query()
             ->with('category')
-            ->where('status', 'completed')
             ->when(
                 $categoryId,
                 fn ($query) => $query->where('category_id', $categoryId)
@@ -38,7 +37,6 @@ class ProjectService
                 'services',
             ])
             ->where('slug', $slug)
-            ->where('status', 'completed')
             ->firstOrFail();
     }
 

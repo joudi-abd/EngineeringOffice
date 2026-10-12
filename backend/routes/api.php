@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Admin\ProjectCategoryController as AdminProjectCategoryController;
 use App\Http\Controllers\Api\Admin\ProjectCoverController;
 use App\Http\Controllers\Api\Admin\ProjectGalleryImageController;
@@ -27,9 +28,13 @@ use Illuminate\Support\Facades\Route;
 // })->middleware('auth:sanctum');
 
 Route::prefix('auth')->group(function () {
-    Route::post('login', [\App\Http\Controllers\Api\AuthController::class, 'login']);
-    Route::post('logout', [\App\Http\Controllers\Api\AuthController::class, 'logout'])->middleware('auth:sanctum');
-    Route::get('me', [\App\Http\Controllers\Api\AuthController::class, 'me'])->middleware('auth:sanctum');
+    Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('register', [AuthController::class, 'register'])->middleware('throttle:5,1');
+    Route::post('verify-email', [AuthController::class, 'verifyEmail'])->middleware('throttle:10,1');
+    Route::post('resend-verification-code', [AuthController::class, 'resendVerificationCode'])->middleware('throttle:3,1');
+
+    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::get('me', [AuthController::class, 'me'])->middleware('auth:sanctum');
 });
 
 Route::middleware('auth:sanctum')->prefix('admin')->group(function () {

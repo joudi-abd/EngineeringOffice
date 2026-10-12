@@ -18,7 +18,9 @@ class AdminUserSeeder extends Seeder
         $user = User::firstOrCreate([
             'email' => 'admin@gmail.com',
         ], [
-            'name' => 'Site Manager',
+            'first_name' => 'Admin',
+            'last_name' => 'Admin',
+            'phone' => '1234567890',
             'password' => Hash::make('password'),
             'status' => 'active',
         ]);
