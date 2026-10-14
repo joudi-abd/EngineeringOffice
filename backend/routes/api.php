@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\SocialController;
 use App\Http\Controllers\Api\Admin\ProjectCategoryController as AdminProjectCategoryController;
 use App\Http\Controllers\Api\Admin\ProjectCoverController;
 use App\Http\Controllers\Api\Admin\ProjectGalleryImageController;
@@ -32,6 +33,7 @@ Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->middleware('throttle:5,1');
     Route::post('verify-email', [AuthController::class, 'verifyEmail'])->middleware('throttle:10,1');
     Route::post('resend-verification-code', [AuthController::class, 'resendVerificationCode'])->middleware('throttle:3,1');
+    Route::post('google', [SocialController::class, 'loginWithGoogle'])->middleware('throttle:5,1,auth-google');
 
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('me', [AuthController::class, 'me'])->middleware('auth:sanctum');
