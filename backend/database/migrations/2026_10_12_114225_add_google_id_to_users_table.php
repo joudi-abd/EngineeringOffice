@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('users', 'google_id')) {
+            return;
+        }
+
         Schema::table('users', function (Blueprint $table) {
             $table->string('google_id')->after('email')->nullable()->unique();
         });

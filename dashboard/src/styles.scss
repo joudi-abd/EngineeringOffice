@@ -283,6 +283,25 @@ p {
   cursor: default;
 }
 
+.login__switch {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--gold);
+  font: inherit;
+  cursor: pointer;
+}
+
+.login__notice {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: start;
+}
+
 .login .error {
   text-align: start;
 }

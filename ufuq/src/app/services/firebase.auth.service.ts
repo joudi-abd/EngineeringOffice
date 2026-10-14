@@ -57,6 +57,7 @@ export class FirebaseAuthService {
       )
     );
 
+    console.log(response);
 
     localStorage.setItem(
       'access_token',
