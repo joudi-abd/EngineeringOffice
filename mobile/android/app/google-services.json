@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "873522067208",
+    "project_id": "my-office-8eb92",
+    "storage_bucket": "my-office-8eb92.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873522067208:android:bdb22d460e608fdf6b9ebd",
+        "android_client_info": {
+          "package_name": "com.ufuq.imperium"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "873522067208-23prrs7q94nudu0anpldkonv76174grj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBldRtoDVsiVShIzDkMWIiV7flpCs4qhXA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "873522067208-23prrs7q94nudu0anpldkonv76174grj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
