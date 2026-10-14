@@ -1,21 +1,33 @@
 <main class="login">
   <app-theme-toggle class="login__theme" />
-  <form class="login__card" [formGroup]="form" (ngSubmit)="submit()">
-    <p class="login__mark">UFUQ</p>
-    <h1>لوحة التحكم</h1>
-    <div class="fields">
-      <label>
-        <span>البريد الإلكتروني</span>
-        <input type="email" formControlName="email" autocomplete="username" dir="ltr" />
-      </label>
-      <label>
-        <span>كلمة المرور</span>
-        <input type="password" formControlName="password" autocomplete="current-password" dir="ltr" />
-      </label>
+
+  <section class="login__art" aria-hidden="true">
+    <div class="login__art-text">
+      <span>UFUQ</span>
+      <span>IMPERIUM</span>
     </div>
-    @if (error()) {
-      <p class="error">{{ error() }}</p>
-    }
-    <button class="login__submit" type="submit" [disabled]="busy()">{{ busy() ? 'جارٍ الدخول' : 'دخول' }}</button>
-  </form>
+  </section>
+
+  <section class="login__panel">
+    <form class="login__card" [formGroup]="form" (ngSubmit)="submit()">
+      <img class="login__logo login__logo--dark" src="brand/logo-ar-light.png" alt="أفق إمبريوم" />
+      <img class="login__logo login__logo--light" src="brand/logo-ar-dark.png" alt="أفق إمبريوم" />
+      <h1>لوحة التحكم</h1>
+      <p class="login__hint">سجّل الدخول لإدارة محتوى الموقع.</p>
+      <div class="fields">
+        <label>
+          <span>البريد الإلكتروني</span>
+          <input type="email" formControlName="email" autocomplete="username" dir="ltr" />
+        </label>
+        <label>
+          <span>كلمة المرور</span>
+          <input type="password" formControlName="password" autocomplete="current-password" dir="ltr" />
+        </label>
+      </div>
+      @if (error()) {
+        <p class="error">{{ error() }}</p>
+      }
+      <button class="login__submit" type="submit" [disabled]="busy()">{{ busy() ? 'جارٍ الدخول' : 'دخول' }}</button>
+    </form>
+  </section>
 </main>

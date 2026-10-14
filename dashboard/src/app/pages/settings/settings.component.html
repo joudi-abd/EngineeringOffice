@@ -72,12 +72,7 @@
       <div class="hours">
         <label>
           <span>الأيام</span>
-          <select [value]="days()" (change)="setDays($event)">
-            @for (option of dayOptions; track option) {
-              <option [value]="option">{{ option }}</option>
-            }
-            <option value="custom">أيام أخرى</option>
-          </select>
+          <app-select [ngModel]="days()" (ngModelChange)="setDays($event)" [options]="dayChoices" />
         </label>
         <label>
           <span>من</span>
@@ -104,15 +99,17 @@
     <div class="fields settings__links">
       <label>
         <span>فيسبوك</span>
-        <input type="url" dir="ltr" [value]="value('facebook')" (input)="setValue('facebook', $event)" />
+        <input type="text" dir="ltr" placeholder="https://… أو اسم المستخدم" [value]="value('facebook')" (input)="setValue('facebook', $event)" />
+        @if (socialWarning('facebook')) {
+          <em class="field-warn">{{ socialWarning('facebook') }}</em>
+        }
       </label>
       <label>
         <span>إنستغرام</span>
-        <input type="url" dir="ltr" [value]="value('instagram')" (input)="setValue('instagram', $event)" />
-      </label>
-      <label>
-        <span>لينكدإن</span>
-        <input type="url" dir="ltr" [value]="value('linkedin')" (input)="setValue('linkedin', $event)" />
+        <input type="text" dir="ltr" placeholder="https://… أو اسم المستخدم" [value]="value('instagram')" (input)="setValue('instagram', $event)" />
+        @if (socialWarning('instagram')) {
+          <em class="field-warn">{{ socialWarning('instagram') }}</em>
+        }
       </label>
     </div>
   </section>

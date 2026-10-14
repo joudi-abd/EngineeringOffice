@@ -19,6 +19,7 @@ export class SiteHeaderComponent implements OnDestroy {
   private readonly router = inject(Router);
   protected readonly phone = computed(() => this.site.setting('phone'));
   protected readonly phoneLink = computed(() => telHref(this.phone()));
+  protected readonly logo = computed(() => this.site.logo());
 
   protected readonly scrolled = signal(false);
   protected readonly menuOpen = signal(false);

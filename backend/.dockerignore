@@ -1,0 +1,9 @@
+.git
+.env
+.env.*
+vendor
+node_modules
+storage/logs/*
+database/database.sqlite
+tests
+README.md

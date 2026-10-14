@@ -25,7 +25,21 @@
     <tbody>
       @for (item of page()?.items ?? []; track item.id) {
         <tr>
-          <td>{{ item.title }}</td>
+          <td>
+            <div class="cell-media">
+              <span class="cell-media__img">
+                @if (item.cover_image) {
+                  <img [src]="item.cover_image" alt="" loading="lazy" />
+                }
+              </span>
+              <span class="cell-media__text">
+                <strong>{{ item.title }}</strong>
+                @if (item.location) {
+                  <small>{{ item.location }}</small>
+                }
+              </span>
+            </div>
+          </td>
           <td>{{ item.category?.name || '—' }}</td>
           <td><span class="pill">{{ statusLabel(item.status) }}</span></td>
           <td><span class="pill" [class.pill--off]="!item.is_featured">{{ item.is_featured ? 'مميز' : 'عادي' }}</span></td>

@@ -12,7 +12,7 @@
     </thead>
     <tbody>
       @for (item of page()?.items ?? []; track item.id) {
-        <tr>
+        <tr [class.is-new]="item.status === 'new'">
           <td>{{ item.name }}</td>
           <td>{{ item.subject }}</td>
           <td><span class="pill" [class.pill--off]="item.status !== 'new'">{{ item.status === 'new' ? 'جديدة' : 'مقروءة' }}</span></td>

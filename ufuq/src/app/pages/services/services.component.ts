@@ -2,9 +2,11 @@ import { Component, OnDestroy, inject } from '@angular/core';
 import { LanguageService } from '../../core/language.service';
 import { SiteApi } from '../../core/site-api.service';
 import { SectionNav } from '../../core/section-nav';
+import { ServiceIconComponent } from '../../layout/service-icon/service-icon.component';
 
 @Component({
   selector: 'app-services',
+  imports: [ServiceIconComponent],
   templateUrl: './services.component.html',
   styleUrl: './services.component.scss',
 })

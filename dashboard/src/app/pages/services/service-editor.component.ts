@@ -3,11 +3,13 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService, errorText } from '../../core/api.service';
 import { Service } from '../../core/models';
+import { SERVICE_ICONS } from '../../core/service-icons';
 import { recordSlug } from '../../core/slug';
+import { SelectComponent, SelectOption } from '../../layout/select.component';
 
 @Component({
   selector: 'app-service-editor',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, SelectComponent],
   templateUrl: './service-editor.component.html',
 })
 export class ServiceEditorComponent implements OnInit {
@@ -17,6 +19,10 @@ export class ServiceEditorComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private image: File | null = null;
 
+  protected readonly iconOptions: SelectOption[] = [
+    { value: '', label: 'بدون أيقونة' },
+    ...SERVICE_ICONS.map((item) => ({ value: item.key, label: item.label, icon: item.path })),
+  ];
   protected readonly error = signal('');
   protected readonly busy = signal(false);
   protected readonly id = signal<number | null>(null);
@@ -56,6 +62,7 @@ export class ServiceEditorComponent implements OnInit {
     const file = (event.target as HTMLInputElement).files?.[0] ?? null;
     this.image = file;
     this.fileName.set(file?.name ?? '');
+    if (file) this.imageUrl.set(URL.createObjectURL(file));
   }
 
   protected save(): void {

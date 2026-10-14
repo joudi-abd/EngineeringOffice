@@ -2,15 +2,11 @@
 
 <header class="top" [class.top--solid]="scrolled() || menuOpen()">
   <a class="logo" href="#top" [attr.aria-label]="c.hero.label" (click)="follow($event, 'top')">
-    <!-- <svg class="logo__mark" viewBox="0 0 86 34" aria-hidden="true">
-      <path d="M1 21.2 13.2 4.8h2.6L4.4 23.6z"/>
-      <path d="M10 23 22.4 4.8h2.6L13.4 25.6z"/>
-      <path d="M24.2 7.2 36.2 29.2h2.8L27.8 7.2z"/>
-      <path d="M47.6 7.2 38.4 29.2h2.8l9.2-22z"/>
-      <path d="M50.2 4.8 62.4 23 58.8 25.6 47.4 4.8z"/>
-      <path d="M59.2 4.8 71.2 21.2 67.6 23.6 56.2 4.8z"/>
-    </svg> -->
-    <span class="logo__name">UFUQ<br />IMPERIUM</span>
+    <img
+      class="logo__img"
+      [src]="logo() || (i18n.lang() === 'ar' ? 'brand/logo-ar-light.png' : 'brand/logo-en-light-compact.png')"
+      [alt]="site.companyName()"
+    />
   </a>
 
   <nav class="links" [attr.aria-label]="c.navLabel">

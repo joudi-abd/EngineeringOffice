@@ -28,17 +28,10 @@ class ProjectResource extends JsonResource
             'cover_image' => $this->coverUrl(),
             'is_featured' => $this->is_featured,
             'published_at' => $this->published_at,
-
-            'category' => $this->whenLoaded(
-                'category',
-                fn () => new ProjectCategoryResource($this->category)
-            ),
-
-            'services' => $this->whenLoaded(
-                'services',
-                fn () => ServiceResource::collection($this->services)
-            ),
-
+            'category' => $this->whenLoaded('category' , fn () => new ProjectCategoryResource($this->category)),
+            'images' => $this->whenLoaded('images', fn () => ProjectImageResource::collection($this->images)),
+            'videos' => $this->whenLoaded('videos', fn () => ProjectVideoResource::collection($this->videos)),
+            'services' => $this->whenLoaded('services', fn () => ServiceResource::collection($this->services)),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
@@ -46,6 +39,14 @@ class ProjectResource extends JsonResource
 
     private function coverUrl(): ?string
     {
-        return $this->getFirstMediaUrl('cover_image') ?: null;
+        $cover = StorageUrl::public($this->cover_image);
+
+        if ($cover || !$this->relationLoaded('images')) {
+            return $cover;
+        }
+
+        $image = $this->images->sortBy('id')->first();
+
+        return $image ? StorageUrl::public($image->image_path) : null;
     }
 }

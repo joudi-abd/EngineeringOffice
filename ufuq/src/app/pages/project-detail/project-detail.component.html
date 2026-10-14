@@ -7,12 +7,19 @@
         <a class="text-link" routerLink="/projects">{{ detail.back }}</a>
       </p>
 
-      @for (group of mosaic(); track group[0].id) {
-        <ul class="mosaic">
-          @for (image of group; track image.id; let first = $first) {
-            <li [class.mosaic__lead]="first">
-              <button type="button" [attr.aria-label]="detail.galleryEyebrow" (click)="openImage(image.index ?? 0)">
-                <img [src]="image.src" [alt]="image.alt" />
+      @if (preview().length) {
+        <ul class="mosaic" [class]="'mosaic mosaic--' + preview().length" dir="ltr">
+          @for (image of preview(); track image.id; let last = $last) {
+            <li [class.mosaic__lead]="image.index === 0">
+              <button
+                type="button"
+                [attr.aria-label]="last && extra() ? detail.galleryEyebrow + ' +' + extra() : detail.galleryEyebrow"
+                (click)="openImage(image.index)"
+              >
+                <img [src]="image.src" [alt]="image.alt" [attr.loading]="image.index === 0 ? 'eager' : 'lazy'" />
+                @if (last && extra()) {
+                  <span class="mosaic__more" dir="ltr"><span>+{{ extra() }}</span></span>
+                }
               </button>
             </li>
           }
@@ -41,6 +48,9 @@
             </button>
           }
           <img [src]="current().src" [alt]="current().alt" (click)="$event.stopPropagation()" />
+          @if (gallery().length > 1) {
+            <p class="viewer__count" dir="ltr">{{ (viewer() ?? 0) + 1 }} / {{ gallery().length }}</p>
+          }
         </div>
       }
 
@@ -77,6 +87,37 @@
           <p class="quiet">{{ paragraph }}</p>
         }
       </section>
+
+      @if (videoItems().length) {
+        <section class="videos" aria-labelledby="project-videos-title">
+          <p class="kicker">{{ detail.videosEyebrow }}</p>
+          <h2 class="display" id="project-videos-title">{{ detail.videosTitle }}</h2>
+          <ul>
+            @for (video of videoItems(); track video.id) {
+              <li>
+                @switch (video.kind) {
+                  @case ('file') {
+                    <video controls preload="metadata" playsinline [src]="video.src" [attr.aria-label]="video.title"></video>
+                  }
+                  @case ('embed') {
+                    <iframe
+                      [src]="video.embed"
+                      [title]="video.title"
+                      loading="lazy"
+                      referrerpolicy="strict-origin-when-cross-origin"
+                      allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                      allowfullscreen
+                    ></iframe>
+                  }
+                  @default {
+                    <a class="text-link" [href]="video.src" target="_blank" rel="noopener noreferrer">{{ detail.openVideo }}</a>
+                  }
+                }
+              </li>
+            }
+          </ul>
+        </section>
+      }
 
       @if (project.services.length) {
         <section class="services" aria-labelledby="project-services-title">

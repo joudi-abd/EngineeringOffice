@@ -85,7 +85,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "port": 4201
+            "port": 4201,
+            "allowedHosts": [".trycloudflare.com"]
           },
           "configurations": {
             "production": {

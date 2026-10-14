@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Project;
 
-use App\Support\ProjectMediaRules;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -34,16 +33,11 @@ class UpdateProjectRequest extends FormRequest
             'area' => ['nullable', 'numeric', 'min:0'],
             'year' => ['nullable', 'integer', 'min:1900', 'max:' . (date('Y') + 1)],
             'status' => ['sometimes', Rule::in(['planning', 'in_progress', 'completed'])],
-            'cover_image' => ProjectMediaRules::image(required: false),
+            'cover_image' => ['nullable', 'image', 'max:5120' , 'mimes:jpeg,png,jpg,gif,svg'],
             'is_featured' => ['sometimes', 'boolean'],
             'published_at' => ['nullable', 'date'],
             'service_ids' => ['sometimes', 'array'],
             'service_ids.*' => ['integer', 'exists:services,id'],
         ];
-    }
-
-    public function messages(): array
-    {
-        return ProjectMediaRules::imageMessages('cover_image');
     }
 }

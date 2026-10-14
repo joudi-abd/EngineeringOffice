@@ -1,0 +1,358 @@
+/*
+ * Luxury layer: texture, light, hairlines and motion shared by every page.
+ * Everything is scoped under `main#top` so it wins over component styles without !important.
+ */
+
+:root {
+  --gold-grad: linear-gradient(110deg, #cbb892 0%, #aa8e69 48%, #7d5d3b 100%);
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.18, 1);
+  --ink-3: #0a0908;
+  --o: left;
+  --to-end: 90deg;
+}
+
+html[dir='rtl'] {
+  --o: right;
+  --to-end: 270deg;
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-deep) #000;
+}
+
+/* Reading progress: a single gold hairline at the very top. */
+html::after {
+  content: '';
+  position: fixed;
+  z-index: 60;
+  top: 0;
+  inset-inline-start: 0;
+  width: calc(var(--p, 0) * 100%);
+  height: 2px;
+  background: var(--gold-grad);
+  pointer-events: none;
+}
+
+/* Film grain: removes the flat "digital black" and gives surfaces a printed feel. */
+body::after {
+  content: '';
+  position: fixed;
+  z-index: 55;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ---------- Reveal ---------- */
+
+.rv {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition:
+    opacity 1s var(--ease) var(--d, 0ms),
+    transform 1s var(--ease) var(--d, 0ms);
+}
+
+.rv.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+.rv-img {
+  /* A 2px sliver stays visible: browsers ignore fully clipped targets in IntersectionObserver. */
+  clip-path: inset(0 0 calc(100% - 2px) 0);
+  transition: clip-path 1.25s var(--ease-in-out) var(--d, 0ms);
+}
+
+.rv-img.is-in {
+  clip-path: inset(0 0 0 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rv,
+  .rv-img {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+    transition: none;
+  }
+}
+
+/* ---------- Typography details ---------- */
+
+main#top .text-link {
+  display: inline-block;
+  border-bottom-color: transparent;
+  background: linear-gradient(var(--gold), var(--gold)) 0 100% / 100% 1px no-repeat;
+  transition: color 0.4s ease, background-size 0.5s var(--ease);
+}
+
+html[dir='rtl'] main#top .text-link {
+  background-position: 100% 100%;
+}
+
+main#top .text-link:hover {
+  background-size: 40% 1px;
+}
+
+main#top .kicker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+main#top .kicker::before {
+  content: '';
+  flex: none;
+  width: 34px;
+  height: 1px;
+  background: var(--gold);
+}
+
+main#top .shot .kicker::before {
+  width: 22px;
+}
+
+/* ---------- Page headers (about, services, projects, project) ---------- */
+
+main#top .intro {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(55% 90% at 92% 0%, rgba(170, 142, 105, 0.17), transparent 62%),
+    radial-gradient(40% 70% at 0% 100%, rgba(125, 93, 59, 0.12), transparent 70%),
+    var(--ink);
+}
+
+html[dir='ltr'] main#top .intro {
+  background:
+    radial-gradient(55% 90% at 8% 0%, rgba(170, 142, 105, 0.17), transparent 62%),
+    radial-gradient(40% 70% at 100% 100%, rgba(125, 93, 59, 0.12), transparent 70%),
+    var(--ink);
+}
+
+main#top .intro::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset-block: 16% 8%;
+  inset-inline-end: clamp(-60px, -2vw, 0px);
+  width: min(44vw, 620px);
+  background: url('/brand/mark-gold.png') center / contain no-repeat;
+  opacity: 0.1;
+  transform: translate3d(0, calc(var(--sy, 0) * 0.08px), 0);
+}
+
+main#top .intro::after {
+  content: '';
+  position: absolute;
+  inset-inline: clamp(28px, 6vw, 96px);
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(var(--to-end), rgba(170, 142, 105, 0.7), rgba(170, 142, 105, 0));
+}
+
+main#top .intro h1.display {
+  font-size: clamp(2.6rem, 6vw, 5.2rem);
+  line-height: 1.08;
+  max-width: 14em;
+}
+
+html[lang='ar'] main#top .intro h1.display {
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  line-height: 1.5;
+}
+
+/* ---------- Lists with a sweeping gold hairline ---------- */
+
+main#top .index-list li,
+main#top .fields__list li,
+main#top .catalogue li,
+main#top .archive li {
+  position: relative;
+}
+
+main#top .index-list li::after,
+main#top .fields__list li::after,
+main#top .catalogue li::after,
+main#top .archive li::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  inset-inline: 0;
+  height: 1px;
+  background: var(--gold-grad);
+  transform: scaleX(0);
+  transform-origin: var(--o);
+  transition: transform 0.8s var(--ease);
+  pointer-events: none;
+}
+
+main#top .index-list li:hover::after,
+main#top .fields__list li:hover::after,
+main#top .catalogue li:hover::after,
+main#top .archive li:hover::after {
+  transform: scaleX(1);
+}
+
+main#top .index-list h3,
+main#top .fields__list h3,
+main#top .catalogue h3 {
+  transition: color 0.4s ease, padding 0.5s var(--ease);
+}
+
+main#top .index-list li:hover h3,
+main#top .fields__list li:hover h3,
+main#top .catalogue li:hover h3 {
+  color: var(--gold-soft);
+  padding-inline-start: 12px;
+}
+
+/* Large outlined numerals for numbered principles. */
+main#top .points__n,
+main#top .points li > span {
+  color: transparent;
+  font-family: "Neue Power", "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(2.6rem, 4vw, 3.6rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  -webkit-text-stroke: 1px rgba(170, 142, 105, 0.85);
+}
+
+main#top .points li {
+  border-top: 0;
+  background: linear-gradient(var(--to-end), rgba(170, 142, 105, 0.9), rgba(170, 142, 105, 0.05)) top / 100% 1px no-repeat;
+}
+
+/* ---------- Image tiles ---------- */
+
+main#top .shot,
+main#top .archive figure,
+main#top .mosaic button {
+  background: #0b0a09;
+}
+
+main#top .shot::after {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgba(203, 184, 146, 0);
+  pointer-events: none;
+  transition: inset 0.6s var(--ease), border-color 0.6s ease;
+}
+
+main#top .shot:hover::after {
+  inset: 22px;
+  border-color: rgba(203, 184, 146, 0.55);
+}
+
+main#top .shot__caption {
+  transition: transform 0.6s var(--ease);
+}
+
+main#top .shot:hover .shot__caption {
+  transform: translate3d(0, -6px, 0);
+}
+
+main#top .archive img {
+  transition: transform 1.2s var(--ease), filter 0.6s ease;
+  filter: saturate(0.9);
+}
+
+main#top .card:hover img {
+  transform: scale(1.045);
+  filter: saturate(1.05);
+}
+
+/* ---------- Call to action blocks ---------- */
+
+main#top .next,
+main#top .contact {
+  position: relative;
+  background:
+    radial-gradient(60% 120% at 0% 100%, rgba(170, 142, 105, 0.16), transparent 62%),
+    linear-gradient(180deg, var(--ink-3), #000);
+  border-top: 0;
+}
+
+html[dir='rtl'] main#top .next,
+html[dir='rtl'] main#top .contact {
+  background:
+    radial-gradient(60% 120% at 100% 100%, rgba(170, 142, 105, 0.16), transparent 62%),
+    linear-gradient(180deg, var(--ink-3), #000);
+}
+
+main#top .next::before,
+main#top .contact::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  inset-inline: clamp(28px, 6vw, 96px);
+  height: 1px;
+  background: linear-gradient(var(--to-end), var(--gold), rgba(170, 142, 105, 0));
+}
+
+main#top .next .display {
+  max-width: 12em;
+  font-size: clamp(2.3rem, 4.6vw, 4rem);
+}
+
+html[lang='ar'] main#top .next .display {
+  font-size: clamp(2rem, 4vw, 3.3rem);
+}
+
+/* ---------- Buttons and fields ---------- */
+
+main#top .contact__form button,
+main#top .send {
+  padding: 16px 38px;
+  color: var(--gold-soft);
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
+}
+
+main#top .contact__form button:hover,
+main#top .send:hover {
+  color: #000;
+  background: var(--gold-soft);
+  box-shadow: 0 14px 40px rgba(170, 142, 105, 0.25);
+}
+
+html[lang='ar'] main#top .contact__form button,
+html[lang='ar'] main#top .send {
+  font-size: 16px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+main#top .contact__form input,
+main#top .contact__form textarea,
+main#top .sheet input,
+main#top .sheet textarea {
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+main#top .contact__form input:focus,
+main#top .contact__form textarea:focus,
+main#top .sheet input:focus,
+main#top .sheet textarea:focus {
+  outline: none;
+  border-bottom-color: var(--gold);
+  box-shadow: 0 1px 0 var(--gold);
+}
+
+main#top .filters button {
+  letter-spacing: 0.02em;
+  transition: color 0.4s ease, border-color 0.4s ease;
+}

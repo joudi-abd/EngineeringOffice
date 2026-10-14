@@ -1,22 +1,35 @@
 <div class="shell">
   <aside class="side">
-    <a class="side__brand" routerLink="/">
-      UFUQ
+    <a class="side__brand" routerLink="/" aria-label="أفق إمبريوم — لوحة التحكم">
+      <img class="side__logo side__logo--dark" src="brand/logo-ar-light.png" alt="" />
+      <img class="side__logo side__logo--light" src="brand/logo-ar-dark.png" alt="" />
       <small>لوحة التحكم</small>
     </a>
+
     <nav aria-label="أقسام اللوحة">
       @for (item of nav; track item.path) {
-        <a [routerLink]="item.path" routerLinkActive="is-on" [routerLinkActiveOptions]="{ exact: item.exact }">{{ item.label }}</a>
+        <a [routerLink]="item.path" routerLinkActive="is-on" [routerLinkActiveOptions]="{ exact: item.exact }">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="item.icon" /></svg>
+          <span>{{ item.label }}</span>
+        </a>
       }
     </nav>
+
+    <div class="side__foot">
+      <span class="side__avatar" aria-hidden="true">{{ initial() }}</span>
+      <div>
+        <strong>{{ auth.user()?.name || 'مدير المكتب' }}</strong>
+        <button class="side__logout" type="button" (click)="logout()">تسجيل الخروج</button>
+      </div>
+    </div>
   </aside>
 
   <div class="main">
     <header class="bar">
-      <p>{{ auth.user()?.name || 'مدير المكتب' }}</p>
+      <p class="bar__date">{{ today }}</p>
       <div class="bar__actions">
         <app-theme-toggle />
-        <button class="btn-quiet" type="button" (click)="logout()">خروج</button>
+        <button class="btn-quiet bar__logout" type="button" (click)="logout()">خروج</button>
       </div>
     </header>
     <div class="main__body">

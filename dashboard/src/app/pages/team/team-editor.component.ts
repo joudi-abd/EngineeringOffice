@@ -51,6 +51,7 @@ export class TeamEditorComponent implements OnInit {
     const file = (event.target as HTMLInputElement).files?.[0] ?? null;
     this.image = file;
     this.fileName.set(file?.name ?? '');
+    if (file) this.imageUrl.set(URL.createObjectURL(file));
   }
 
   protected save(): void {

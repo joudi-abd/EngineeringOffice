@@ -17,6 +17,7 @@
           <li>
             <span>{{ index + 1 < 10 ? '0' + (index + 1) : index + 1 }}</span>
             <div>
+              <app-service-icon [name]="item.icon" />
               <h3>{{ item.name }}</h3>
               <p class="quiet">{{ item.short_description }}</p>
               @if (item.description) {

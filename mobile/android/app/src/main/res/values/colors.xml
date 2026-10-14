@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#F2F0EB</color>
+    <!-- Window colour while the app starts: the day look's page colour (values-night overrides it). -->
+    <color name="ufuq_launch_bg">#F2F0EB</color>
+</resources>

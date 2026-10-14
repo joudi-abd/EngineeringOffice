@@ -9,11 +9,7 @@
     </label>
     <label>
       <span>التقييم</span>
-      <select formControlName="rating">
-        @for (star of [1, 2, 3, 4, 5]; track star) {
-          <option [value]="star">{{ star }}</option>
-        }
-      </select>
+      <app-select formControlName="rating" [options]="ratingOptions" />
     </label>
     <label>
       <span>النص</span>

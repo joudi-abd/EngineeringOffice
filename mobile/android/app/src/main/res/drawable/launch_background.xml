@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Plain page colour while Flutter starts (beige in day mode, black in night mode): no image on purpose. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/ufuq_launch_bg" />
+</layer-list>

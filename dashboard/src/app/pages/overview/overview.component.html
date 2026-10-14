@@ -7,18 +7,22 @@
 
 <div class="cards">
   <a class="card" routerLink="/projects">
+    <i class="card__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V5l9-2v18M14 8h5v13M3.5 21h17M9 8h1M9 12h1M9 16h1"/></svg></i>
     <span>المشاريع</span>
     <strong>{{ projects() ?? '—' }}</strong>
   </a>
   <a class="card" routerLink="/messages">
+    <i class="card__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 6h17v12h-17zM3.5 7l8.5 6 8.5-6"/></svg></i>
     <span>الرسائل</span>
     <strong>{{ messages() ?? '—' }}</strong>
   </a>
   <a class="card" routerLink="/messages">
+    <i class="card__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a5 5 0 0 0-5 5v3.2L5.4 15h13.2L17 11.7V8.5a5 5 0 0 0-5-5zM10 18a2 2 0 0 0 4 0"/></svg></i>
     <span>غير مقروءة</span>
     <strong>{{ unread() ?? '—' }}</strong>
   </a>
   <a class="card" routerLink="/testimonials">
+    <i class="card__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></svg></i>
     <span>الآراء</span>
     <strong>{{ reviews() ?? '—' }}</strong>
   </a>

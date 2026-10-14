@@ -4,10 +4,13 @@ import { SiteApi } from '../../core/site-api.service';
 import { LanguageService } from '../../core/language.service';
 import { gmailHref, telHref, whatsappHref } from '../../core/site-content';
 import { SectionNav } from '../../core/section-nav';
+import { ServiceIconComponent } from '../../layout/service-icon/service-icon.component';
+import { SocialLinksComponent } from '../../layout/social-links/social-links.component';
+import { FirebaseAuthService } from '../../services/firebase.auth.service';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink],
+  imports: [RouterLink, ServiceIconComponent, SocialLinksComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
@@ -28,6 +31,8 @@ export class HomeComponent {
     const number = this.site.setting('whatsapp');
     return number ? whatsappHref(number) : '';
   });
+
+  protected readonly login_with_google = inject(FirebaseAuthService);
 
   protected readonly name = signal('');
   protected readonly mail = signal('');

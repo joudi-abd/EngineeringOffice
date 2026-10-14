@@ -14,13 +14,23 @@
       <span>نبذة</span>
       <textarea formControlName="bio"></textarea>
     </label>
-    @if (imageUrl()) {
-      <img class="thumb" [src]="imageUrl()!" alt="" />
-    }
-    <label>
-      <span>الصورة {{ fileName() }}</span>
-      <input type="file" accept="image/jpeg,image/png,image/jpg" (change)="onFile($event)" />
-    </label>
+    <div class="field-group">
+      <span>الصورة</span>
+      <label class="filepick">
+        <span class="filepick__preview filepick__preview--round">
+          @if (imageUrl()) {
+            <img [src]="imageUrl()!" alt="" />
+          } @else {
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4.5 20.5a7.5 7.5 0 0 1 15 0" /></svg>
+          }
+        </span>
+        <span class="filepick__text">
+          <strong>{{ fileName() || (imageUrl() ? 'تغيير الصورة' : 'اختيار صورة') }}</strong>
+          <small>JPG أو PNG</small>
+        </span>
+        <input type="file" accept="image/jpeg,image/png,image/jpg" (change)="onFile($event)" hidden />
+      </label>
+    </div>
     <label class="check">
       <input type="checkbox" formControlName="is_active" />
       <span>ظاهر في الموقع</span>

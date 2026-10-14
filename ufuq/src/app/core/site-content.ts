@@ -19,6 +19,14 @@ export interface ProjectImage {
   alt_text: string | null;
 }
 
+export interface ProjectVideo {
+  id: number;
+  title: string | null;
+  video_path: string | null;
+  video_url: string | null;
+  external_url: string | null;
+}
+
 export interface Service {
   id: number;
   name: string;
@@ -46,6 +54,7 @@ export interface Project {
   published_at: string | null;
   category: ProjectCategory | null;
   images: ProjectImage[];
+  videos: ProjectVideo[];
   services: Service[];
 }
 
@@ -91,7 +100,11 @@ export function telHref(phone: string): string {
 }
 
 export function whatsappHref(number: string): string {
-  return `https://wa.me/${number.replace(/\D/g, '')}`;
+  let digits = number.replace(/\D/g, '');
+  // wa.me needs the country code: 00… is the international prefix, a single leading 0 is a local Syrian number.
+  if (digits.startsWith('00')) digits = digits.slice(2);
+  else if (digits.startsWith('0')) digits = `963${digits.slice(1)}`;
+  return `https://wa.me/${digits}`;
 }
 
 export function gmailHref(email: string): string {
@@ -168,7 +181,9 @@ export interface SiteContent {
   footer: {
     blurb: string;
     rights: string;
+    reserved: string;
     navLabel: string;
+    socialLabel: string;
   };
   aboutPage: {
     metaTitle: string;
@@ -226,6 +241,9 @@ export interface SiteContent {
       servicesEyebrow: string;
       servicesTitle: string;
       galleryEyebrow: string;
+      videosEyebrow: string;
+      videosTitle: string;
+      openVideo: string;
       previous: string;
       next: string;
       reviewsEyebrow: string;
@@ -383,6 +401,9 @@ export const CONTENT: Record<Lang, SiteContent> = {
         servicesEyebrow: 'الخدمات',
         servicesTitle: 'ما دخل في هذا المشروع.',
         galleryEyebrow: 'الصور',
+        videosEyebrow: 'الفيديو',
+        videosTitle: 'شاهد المشروع.',
+        openVideo: 'فتح الفيديو',
         previous: 'الصورة السابقة',
         next: 'الصورة التالية',
         reviewsEyebrow: 'الآراء',
@@ -407,7 +428,9 @@ export const CONTENT: Record<Lang, SiteContent> = {
     footer: {
       blurb: 'عمارة، وتصميم داخلي، وإنشاء.',
       rights: 'أفق إمبريوم. جميع الحقوق محفوظة.',
+      reserved: 'جميع الحقوق محفوظة.',
       navLabel: 'تذييل الصفحة',
+      socialLabel: 'حساباتنا',
     },
   },
   en: {
@@ -543,6 +566,9 @@ export const CONTENT: Record<Lang, SiteContent> = {
         servicesEyebrow: 'Services',
         servicesTitle: 'What this project included.',
         galleryEyebrow: 'Images',
+        videosEyebrow: 'Video',
+        videosTitle: 'Watch the project.',
+        openVideo: 'Open video',
         previous: 'Previous image',
         next: 'Next image',
         reviewsEyebrow: 'Reviews',
@@ -567,7 +593,9 @@ export const CONTENT: Record<Lang, SiteContent> = {
     footer: {
       blurb: 'Architecture, interiors, and construction.',
       rights: 'UFUQ Imperium. All rights reserved.',
+      reserved: 'All rights reserved.',
       navLabel: 'Footer',
+      socialLabel: 'Our accounts',
     },
   },
 };

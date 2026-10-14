@@ -4,9 +4,11 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService, errorText } from '../../core/api.service';
 import { Testimonial } from '../../core/models';
 
+import { SelectComponent, SelectOption } from '../../layout/select.component';
+
 @Component({
   selector: 'app-testimonial-editor',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, SelectComponent],
   templateUrl: './testimonial-editor.component.html',
 })
 export class TestimonialEditorComponent implements OnInit {
@@ -15,6 +17,7 @@ export class TestimonialEditorComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly formBuilder = inject(FormBuilder);
 
+  protected readonly ratingOptions: SelectOption[] = [5, 4, 3, 2, 1].map((n) => ({ value: String(n), label: '★'.repeat(n) + '  ' + n }));
   protected readonly error = signal('');
   protected readonly busy = signal(false);
   protected readonly projectTitle = signal('');

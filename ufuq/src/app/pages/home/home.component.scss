@@ -18,15 +18,80 @@
   height: 85%;
   object-fit: cover;
   object-position: 62% 42%;
+  scale: 1.16;
+  transform: translate3d(0, calc(min(var(--sy, 0), 900) * 0.07px), 0);
+  animation: hero-in 2.8s var(--ease) both;
+  will-change: transform;
+}
+
+@keyframes hero-in {
+  from {
+    scale: 1.32;
+    filter: brightness(0.6);
+  }
+  to {
+    scale: 1.16;
+    filter: brightness(1);
+  }
+}
+
+.hero__frame {
+  position: absolute;
+  z-index: 1;
+  inset: 104px clamp(20px, 2.4vw, 44px) 14%;
+  border: 1px solid rgba(203, 184, 146, 0.22);
+  border-bottom: 0;
+  pointer-events: none;
+  animation: fade-in 2s ease 0.8s both;
+}
+
+.hero__frame::before,
+.hero__frame::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  width: 26px;
+  height: 26px;
+  border-top: 1px solid var(--gold-soft);
+}
+
+.hero__frame::before {
+  left: -1px;
+  border-left: 1px solid var(--gold-soft);
+}
+
+.hero__frame::after {
+  right: -1px;
+  border-right: 1px solid var(--gold-soft);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 38px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .hero__shade {
   position: absolute;
   inset: 0 0 15%;
   background:
-    linear-gradient(180deg, rgba(16, 21, 28, 0.5) 0%, rgba(16, 21, 28, 0.08) 22%, rgba(16, 21, 28, 0) 40%),
-    linear-gradient(to left, rgba(16, 21, 28, 0.62) 0%, rgba(16, 21, 28, 0.28) 24%, rgba(16, 21, 28, 0) 48%),
-    linear-gradient(180deg, rgba(16, 21, 28, 0) 58%, rgba(16, 21, 28, 0.45) 82%, var(--ink) 100%);
+    linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.08) 22%, rgba(0, 0, 0, 0) 40%),
+    linear-gradient(to left, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.28) 24%, rgba(0, 0, 0, 0) 48%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, 0.45) 82%, var(--ink) 100%);
   pointer-events: none;
 }
 
@@ -46,8 +111,8 @@
   right: auto;
   bottom: 13.5vh;
   margin: 0;
-  color: #f7f4ee;
-  font-family: "IBM Plex Serif", "Times New Roman", serif;
+  color: #f2f0eb;
+  font-family: "Neue Power", "Helvetica Neue", Arial, sans-serif;
   font-weight: 500;
   font-size: clamp(3.4rem, 6.6vw, 6.4rem);
   line-height: 0.92;
@@ -59,6 +124,15 @@
 
 .brand__line {
   display: block;
+  animation: rise 1.4s var(--ease) 0.5s both;
+}
+
+.brand__line--park {
+  animation-delay: 0.7s;
+}
+
+.brand__script {
+  animation: fade-in 1.6s ease 1.5s both;
 }
 
 .brand__line--park {
@@ -72,10 +146,10 @@
   right: auto;
   top: 0.55em;
   margin-left: 0.28em;
-  color: #d2b07a;
-  font-family: "IBM Plex Serif", "Times New Roman", serif;
-  font-size: 0.34em;
-  font-style: italic;
+  color: #aa8e69;
+  font-family: "Neue Power", "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.28em;
+  font-style: normal;
   font-weight: 400;
   letter-spacing: 0.08em;
   line-height: 1;
@@ -107,6 +181,24 @@
   fill: none;
   stroke: currentColor;
   stroke-width: 1.2;
+}
+
+.scroll {
+  animation: fade-in 1.4s ease 1.8s both;
+}
+
+.scroll svg {
+  animation: nudge 2.4s ease-in-out infinite;
+}
+
+@keyframes nudge {
+  0%,
+  100% {
+    transform: translateY(-3px);
+  }
+  50% {
+    transform: translateY(4px);
+  }
 }
 
 .scroll:hover {
@@ -238,7 +330,7 @@
   overflow: hidden;
   color: inherit;
   text-decoration: none;
-  background: #0c1118;
+  background: #0b0a09;
 }
 
 .shot--lead {
@@ -261,7 +353,7 @@
   inset-inline: 0;
   bottom: 0;
   padding: 72px 24px 22px;
-  background: linear-gradient(180deg, rgba(16, 21, 28, 0) 0%, rgba(16, 21, 28, 0.9) 68%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.9) 68%);
 }
 
 .shot .kicker {
@@ -317,8 +409,6 @@
   grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr);
   gap: 48px 72px;
   align-items: start;
-  background: #0c1118;
-  border-top: 1px solid var(--line);
 }
 
 .contact__form {
@@ -351,7 +441,7 @@
   justify-self: start;
   padding: 12px 18px;
   border-radius: 8px;
-  color: #10151c;
+  color: #000000;
   background: var(--gold-soft);
   border: 0;
   font: inherit;
@@ -378,7 +468,7 @@
   display: inline-block;
   margin-top: 28px;
   color: var(--gold-soft);
-  font-family: "IBM Plex Serif", "Times New Roman", serif;
+  font-family: "Neue Power", "29LT Bukra", sans-serif;
   font-size: clamp(1.7rem, 3vw, 2.6rem);
   font-variant-numeric: lining-nums;
   letter-spacing: 0.03em;
@@ -503,4 +593,210 @@
   .shot img {
     transition: none;
   }
+}
+
+/* ---------- Marquee of the office's services ---------- */
+
+.marquee {
+  overflow: hidden;
+  padding: 26px 0 22px;
+  background: var(--ink);
+  border-block: 1px solid var(--line);
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee 60s linear infinite;
+}
+
+.marquee ul {
+  display: flex;
+  flex: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.marquee li {
+  display: flex;
+  align-items: center;
+  gap: clamp(28px, 4vw, 64px);
+  padding-inline-end: clamp(28px, 4vw, 64px);
+  white-space: nowrap;
+  font-family: var(--serif);
+  font-size: clamp(1.9rem, 4.2vw, 3.6rem);
+  font-weight: 300;
+  line-height: 1.3;
+  color: rgba(242, 240, 235, 0.2);
+}
+
+:host-context(html:not([lang='ar'])) .marquee li {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(203, 184, 146, 0.45);
+}
+
+.marquee li::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  flex: none;
+  border: 1px solid var(--gold);
+  transform: rotate(45deg);
+}
+
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+
+/* ---------- Numbered chapters ---------- */
+
+:host {
+  counter-reset: chapter;
+}
+
+main#top .chapter__copy > .kicker,
+main#top .team > .kicker,
+main#top .split__intro > .kicker,
+main#top .works__head > .kicker,
+main#top .why__head > .kicker,
+main#top .contact > div > .kicker {
+  counter-increment: chapter;
+}
+
+main#top .chapter__copy > .kicker::before,
+main#top .team > .kicker::before,
+main#top .split__intro > .kicker::before,
+main#top .works__head > .kicker::before,
+main#top .why__head > .kicker::before,
+main#top .contact > div > .kicker::before {
+  content: counter(chapter, decimal-leading-zero);
+  width: auto;
+  height: auto;
+  background: none;
+  color: var(--gold-soft);
+  font-family: "Neue Power", "Helvetica Neue", Arial, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.2em;
+}
+
+main#top .chapter__copy > .kicker::after,
+main#top .team > .kicker::after,
+main#top .split__intro > .kicker::after,
+main#top .works__head > .kicker::after,
+main#top .why__head > .kicker::after,
+main#top .contact > div > .kicker::after {
+  content: '';
+  width: 34px;
+  height: 1px;
+  background: var(--gold);
+}
+
+/* ---------- About chapter: watermark of the mark ---------- */
+
+.chapter {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 560px;
+  display: flex;
+  align-items: center;
+  background:
+    radial-gradient(50% 80% at 0% 50%, rgba(170, 142, 105, 0.13), transparent 65%),
+    var(--ink);
+}
+
+:host-context(html[dir='ltr']) .chapter {
+  background:
+    radial-gradient(50% 80% at 100% 50%, rgba(170, 142, 105, 0.13), transparent 65%),
+    var(--ink);
+}
+
+.chapter::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset-block: 14%;
+  inset-inline-start: auto;
+  inset-inline-end: clamp(-30px, 3vw, 70px);
+  width: min(40vw, 560px);
+  background: url('/brand/mark-gold.png') center / contain no-repeat;
+  opacity: 0.08;
+  transform: translate3d(0, calc((var(--sy, 0) - 700) * -0.05px), 0);
+}
+
+.chapter__copy .display {
+  font-size: clamp(2.5rem, 5vw, 4.4rem);
+  max-width: 11em;
+}
+
+:host-context(html[lang='ar']) .chapter__copy .display {
+  font-size: clamp(2.1rem, 4.2vw, 3.5rem);
+}
+
+.chapter .lede {
+  max-width: 520px;
+  font-size: 17px;
+}
+
+.team,
+.works,
+.why {
+  position: relative;
+}
+
+.split {
+  background:
+    radial-gradient(45% 70% at 100% 0%, rgba(170, 142, 105, 0.1), transparent 65%),
+    var(--ink-2);
+}
+
+.shot__meta {
+  letter-spacing: 0.1em;
+}
+
+@media (max-width: 800px) {
+  .hero__frame {
+    inset: 84px 14px 15%;
+  }
+
+  .marquee {
+    padding: 18px 0 14px;
+  }
+
+  .chapter {
+    min-height: 0;
+  }
+
+  .chapter::before {
+    width: 90vw;
+    opacity: 0.08;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__photo,
+  .hero__frame,
+  .brand__line,
+  .brand__script,
+  .scroll,
+  .scroll svg,
+  .marquee__track {
+    animation: none;
+  }
+
+  .hero__photo {
+    transform: none;
+  }
+}
+
+.contact__social {
+  display: block;
+  margin: 26px 0 34px;
 }

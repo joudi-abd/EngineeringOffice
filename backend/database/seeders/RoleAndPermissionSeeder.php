@@ -58,11 +58,6 @@ class RoleAndPermissionSeeder extends Seeder
             'guard_name' => 'web',
         ]);
         $siteManager->syncPermissions($permissions);
-
-        $customer = Role::firstOrCreate([
-            'name' => 'customer',
-            'guard_name' => 'web',
-        ]);
         
     }
 }

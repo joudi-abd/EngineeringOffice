@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="700" viewBox="0 0 390 700">
+  <title>UFUQ Imperium - architectural elevation (day)</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="480" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f2f0eb"/>
+      <stop offset="0.55" stop-color="#ece7dc"/>
+      <stop offset="1" stop-color="#ddd2bc"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="195" cy="480" r="250" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d9b46e" stop-opacity="0.8"/>
+      <stop offset="0.22" stop-color="#cfa965" stop-opacity="0.42"/>
+      <stop offset="0.55" stop-color="#b8975f" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#b8975f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="horizon" x1="0" y1="0" x2="390" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7d5d3b" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#5a3d22" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#7d5d3b" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="139" y1="229.88" x2="251" y2="354.2" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#bc9d70"/>
+      <stop offset="0.5" stop-color="#aa8e69"/>
+      <stop offset="1" stop-color="#7d5d3b"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="295" x2="0" y2="480" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fbfaf6"/>
+      <stop offset="1" stop-color="#e2dccb"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="mirror" x1="0" y1="480" x2="0" y2="345" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7d5d3b" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#7d5d3b" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="pool" cx="195" cy="483" r="170" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#cfa965" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#cfa965" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="390" height="700" fill="#f2f0eb"/>
+  <rect width="390" height="480" fill="url(#sky)"/>
+  <rect width="390" height="480" fill="url(#sun)"/>
+  <g id="grid" fill="none" stroke="#7d5d3b" stroke-width="0.5">
+    <path opacity="0.045" d="M26 0V480M52 0V480M78 0V480M104 0V480M156 0V480M182 0V480M208 0V480M234 0V480M286 0V480M312 0V480M338 0V480M364 0V480M0 454H390M0 428H390M0 402H390M0 376H390M0 324H390M0 298H390M0 272H390M0 246H390M0 194H390M0 168H390M0 142H390M0 116H390M0 64H390M0 38H390M0 12H390"/>
+    <path opacity="0.1" d="M0 0V480M130 0V480M260 0V480M390 0V480M0 480H390M0 350H390M0 220H390M0 90H390"/>
+  </g>
+  <path d="M126 350H134M130 346V354M126 220H134M130 216V224M126 90H134M130 86V94M256 350H264M260 346V354M256 220H264M260 216V224M256 90H264M260 86V94" fill="none" stroke="#7d5d3b" opacity="0.32" stroke-width="0.8"/>
+  <g id="sun-arcs" fill="none" stroke="#7d5d3b">
+    <path d="M139 480A56 56 0 0 1 251 480" opacity="0.62" stroke-width="0.9"/>
+    <path d="M103 480A92 92 0 0 1 287 480" opacity="0.5" stroke-width="0.9"/>
+    <path d="M65 480A130 130 0 0 1 325 480" opacity="0.4" stroke-width="0.9"/>
+    <path d="M25 480A170 170 0 0 1 365 480" opacity="0.3" stroke-width="0.9"/>
+    <path d="M-17 480A212 212 0 0 1 407 480" opacity="0.2" stroke-width="0.9"/>
+    <path d="M-61 480A256 256 0 0 1 451 480" opacity="0.12" stroke-width="0.9"/>
+    <path d="M-61 480L-72 480M-60.03 457.69L-63.51 457.38M-57.11 435.55L-63.02 434.5M-52.28 413.74L-55.66 412.84M-45.56 392.44L-51.2 390.39M-37.01 371.81L-40.19 370.33M-26.7 352L-36.23 346.5M-14.7 333.16L-17.57 331.16M-1.11 315.45L-5.7 311.59M13.98 298.98L11.51 296.51M30.45 283.89L26.59 279.3M48.16 270.3L46.16 267.43M67 258.3L61.5 248.77M86.81 247.99L85.33 244.81M107.44 239.44L105.39 233.8M128.74 232.72L127.84 229.34M150.55 227.89L149.5 221.98M172.69 224.97L172.38 221.49M195 224L195 213M217.31 224.97L217.62 221.49M239.45 227.89L240.5 221.98M261.26 232.72L262.16 229.34M282.56 239.44L284.61 233.8M303.19 247.99L304.67 244.81M323 258.3L328.5 248.77M341.84 270.3L343.84 267.43M359.55 283.89L363.41 279.3M376.02 298.98L378.49 296.51M391.11 315.45L395.7 311.59M404.7 333.16L407.57 331.16M416.7 352L426.23 346.5M427.01 371.81L430.19 370.33M435.56 392.44L441.2 390.39M442.28 413.74L445.66 412.84M447.11 435.55L453.02 434.5M450.03 457.69L453.51 457.38M451 480L462 480" opacity="0.34" stroke-width="0.8"/>
+    <path d="M155 480A40 40 0 0 1 235 480Z" fill="#dbb872" fill-opacity="0.9" stroke="none"/>
+  </g>
+  <g id="axes" fill="none" stroke="#7d5d3b">
+    <path d="M27 182V486" opacity="0.34" stroke-width="0.8" stroke-dasharray="14 3 2 3"/>
+    <circle cx="27" cy="170" r="9" opacity="0.75" stroke-width="1"/>
+    <path d="M24 170H30M27 167V173" opacity="0.5" stroke-width="0.8"/>
+    <path d="M139 182V486" opacity="0.34" stroke-width="0.8" stroke-dasharray="14 3 2 3"/>
+    <circle cx="139" cy="170" r="9" opacity="0.75" stroke-width="1"/>
+    <path d="M136 170H142M139 167V173" opacity="0.5" stroke-width="0.8"/>
+    <path d="M251 182V486" opacity="0.34" stroke-width="0.8" stroke-dasharray="14 3 2 3"/>
+    <circle cx="251" cy="170" r="9" opacity="0.75" stroke-width="1"/>
+    <path d="M248 170H254M251 167V173" opacity="0.5" stroke-width="0.8"/>
+    <path d="M363.53 182V486" opacity="0.34" stroke-width="0.8" stroke-dasharray="14 3 2 3"/>
+    <circle cx="363.53" cy="170" r="9" opacity="0.75" stroke-width="1"/>
+    <path d="M360.53 170H366.53M363.53 167V173" opacity="0.5" stroke-width="0.8"/>
+    <path d="M19 206H371.53M23.5 209.5L30.5 202.5M27 198V214M135.5 209.5L142.5 202.5M139 198V214M247.5 209.5L254.5 202.5M251 198V214M360.03 209.5L367.03 202.5M363.53 198V214" opacity="0.8" stroke-width="1"/>
+  </g>
+  <g id="reflection" transform="translate(0 960) scale(1 -1)" fill="url(#mirror)" stroke="none">
+    <polygon points="27,414.14 139,354.94 139,480 27,480"/>
+    <polygon points="251,354.94 363.53,414.14 363.53,480 251,480"/>
+    <polygon points="139,229.88 251,229.88 251,354.2 139,295"/>
+  </g>
+  <ellipse cx="195" cy="483" rx="170" ry="16" fill="url(#pool)"/>
+  <g id="wing-L">
+    <polygon points="27,414.14 139,354.94 139,480 27,480" fill="url(#glass)"/>
+    <path d="M41 408.74V480M55 401.34V480M69 393.94V480M83 386.54V480M97 379.14V480M111 371.74V480M125 364.34V480" stroke="#7d5d3b" opacity="0.13" stroke-width="0.6" fill="none"/>
+    <path d="M27 466H139M27 452H139M27 438H139M27 424H139M34.83 410H139M61.32 396H139M87.81 382H139M114.29 368H139" stroke="#7d5d3b" opacity="0.26" stroke-width="0.7" fill="none"/>
+    <clipPath id="clip-L"><polygon points="27,414.14 139,354.94 139,480 27,480"/></clipPath>
+    <path clip-path="url(#clip-L)" d="M47.16 480L63.16 480L153.16 280L137.16 280ZM83 480L90 480L180 280L173 280ZM96.44 480L99.44 480L189.44 280L186.44 280Z" fill="#ffffff" fill-opacity="0.07"/>
+    <polygon points="27,414.14 139,354.94 139,480 27,480" fill="url(#sheen)" opacity="0.45"/>
+    <path d="M27 410.14L139 350.94" stroke="#7d5d3b" opacity="0.55" stroke-width="0.8" fill="none"/>
+    <path d="M27 414.14V410.14M139 354.94V350.94" stroke="#7d5d3b" opacity="0.55" stroke-width="0.8" fill="none"/>
+    <path d="M27 480V414.14L139 354.94V480" fill="none" stroke="#5a3d22" stroke-width="1.4" stroke-linejoin="miter"/>
+  </g>
+  <g id="wing-R">
+    <polygon points="251,354.94 363.53,414.14 363.53,480 251,480" fill="url(#glass)"/>
+    <path d="M265 364.31V480M279 371.67V480M293 379.04V480M307 386.4V480M321 393.77V480M335 401.13V480M349 408.5V480" stroke="#7d5d3b" opacity="0.13" stroke-width="0.6" fill="none"/>
+    <path d="M251 466H363.53M251 452H363.53M251 438H363.53M251 424H363.53M251 410H355.66M251 396H329.05M251 382H302.43M251 368H275.82" stroke="#7d5d3b" opacity="0.26" stroke-width="0.7" fill="none"/>
+    <clipPath id="clip-R"><polygon points="251,354.94 363.53,414.14 363.53,480 251,480"/></clipPath>
+    <path clip-path="url(#clip-R)" d="M271.25 480L287.25 480L377.25 280L361.25 280ZM307.26 480L314.26 480L404.26 280L397.26 280ZM320.77 480L323.77 480L413.77 280L410.77 280Z" fill="#ffffff" fill-opacity="0.07"/>
+    <polygon points="251,354.94 363.53,414.14 363.53,480 251,480" fill="url(#sheen)" opacity="0.45"/>
+    <path d="M251 350.94L363.53 410.14" stroke="#7d5d3b" opacity="0.55" stroke-width="0.8" fill="none"/>
+    <path d="M251 354.94V350.94M363.53 414.14V410.14" stroke="#7d5d3b" opacity="0.55" stroke-width="0.8" fill="none"/>
+    <path d="M251 480V354.94L363.53 414.14V480" fill="none" stroke="#5a3d22" stroke-width="1.4" stroke-linejoin="miter"/>
+  </g>
+  <g id="block">
+    <polygon points="139,229.88 251,229.88 251,354.2 139,295" fill="url(#gold)"/>
+    <path d="M147 230.88V298.23M155 230.88V302.46M163 230.88V306.69M171 230.88V310.91M179 230.88V315.14M187 230.88V319.37M195 230.88V323.6M203 230.88V327.83M211 230.88V332.06M219 230.88V336.29M227 230.88V340.51M235 230.88V344.74M243 230.88V348.97" stroke="#000000" opacity="0.22" stroke-width="0.7" fill="none"/>
+    <path d="M139 229.88H251" stroke="#5a3d22" stroke-width="1.6" fill="none"/>
+    <path d="M139 295L251 354.2" stroke="#f3e8cf" stroke-width="1" opacity="0.85" fill="none"/>
+    <path d="M139 229.88V295M251 229.88V354.2" stroke="#f3e8cf" stroke-width="1" opacity="0.7" fill="none"/>
+  </g>
+  <path d="M0 480H390" stroke="url(#horizon)" stroke-width="1.2" fill="none"/>
+  <path d="M13 480H377" stroke="#5a3d22" stroke-width="2" fill="none"/>
+  <path d="M13 488L19 482M19 488L25 482M25 488L31 482M31 488L37 482M37 488L43 482M43 488L49 482M49 488L55 482M55 488L61 482M61 488L67 482M67 488L73 482M73 488L79 482M79 488L85 482M85 488L91 482M91 488L97 482M97 488L103 482M103 488L109 482M109 488L115 482M115 488L121 482M121 488L127 482M127 488L133 482M133 488L139 482M139 488L145 482M145 488L151 482M151 488L157 482M157 488L163 482M163 488L169 482M169 488L175 482M175 488L181 482M181 488L187 482M187 488L193 482M193 488L199 482M199 488L205 482M205 488L211 482M211 488L217 482M217 488L223 482M223 488L229 482M229 488L235 482M235 488L241 482M241 488L247 482M247 488L253 482M253 488L259 482M259 488L265 482M265 488L271 482M271 488L277 482M277 488L283 482M283 488L289 482M289 488L295 482M295 488L301 482M301 488L307 482M307 488L313 482M313 488L319 482M319 488L325 482M325 488L331 482M331 488L337 482M337 488L343 482M343 488L349 482M349 488L355 482M355 488L361 482M361 488L367 482M367 488L373 482" stroke="#7d5d3b" opacity="0.45" stroke-width="0.7" fill="none"/>
+  <path d="M13 488H377" stroke="#7d5d3b" opacity="0.5" stroke-width="0.7" fill="none"/>
+  <g id="scale">
+    <circle cx="186" cy="464.87" r="1.87" fill="#0b0a08"/>
+    <path d="M186 467.24V472.86M186 472.86L183.96 480M186 472.86L188.04 480M183.62 468.78L186 466.4L188.38 468.78" stroke="#0b0a08" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <circle cx="205" cy="464.87" r="1.87" fill="#0b0a08"/>
+    <path d="M205 467.24V472.86M205 472.86L202.96 480M205 472.86L207.04 480M202.62 468.78L205 466.4L207.38 468.78" stroke="#0b0a08" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+</svg>

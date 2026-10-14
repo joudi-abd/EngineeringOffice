@@ -40,6 +40,15 @@ export interface ProjectImage {
   alt_text: string | null;
 }
 
+export interface ProjectVideo {
+  id: number;
+  project_id: number;
+  title: string | null;
+  video_path: string | null;
+  video_url: string | null;
+  external_url: string | null;
+}
+
 export interface Project {
   id: number;
   title: string;
@@ -55,6 +64,7 @@ export interface Project {
   published_at: string | null;
   category?: ProjectCategory | null;
   images?: ProjectImage[];
+  videos?: ProjectVideo[];
   services?: Service[];
 }
 

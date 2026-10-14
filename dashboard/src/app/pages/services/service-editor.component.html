@@ -16,15 +16,25 @@
     </label>
     <label>
       <span>الأيقونة</span>
-      <input formControlName="icon" dir="ltr" />
+      <app-select formControlName="icon" [options]="iconOptions" placeholder="اختر أيقونة للخدمة" />
     </label>
-    @if (imageUrl()) {
-      <img class="thumb" [src]="imageUrl()!" alt="" />
-    }
-    <label>
-      <span>صورة {{ fileName() }}</span>
-      <input type="file" accept="image/*" (change)="onFile($event)" />
-    </label>
+    <div class="field-group">
+      <span>الصورة</span>
+      <label class="filepick">
+        <span class="filepick__preview">
+          @if (imageUrl()) {
+            <img [src]="imageUrl()!" alt="" />
+          } @else {
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5h16v13H4zM4 15l4.5-4.5 4 4 3-3L20 16M9 9.5h.01" /></svg>
+          }
+        </span>
+        <span class="filepick__text">
+          <strong>{{ fileName() || (imageUrl() ? 'تغيير الصورة' : 'اختيار صورة') }}</strong>
+          <small>JPG أو PNG أو WebP</small>
+        </span>
+        <input type="file" accept="image/*" (change)="onFile($event)" hidden />
+      </label>
+    </div>
     <label class="check">
       <input type="checkbox" formControlName="is_active" />
       <span>ظاهرة في الموقع</span>

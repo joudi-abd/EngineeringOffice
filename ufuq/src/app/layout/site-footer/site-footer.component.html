@@ -3,8 +3,13 @@
 <footer class="foot">
   <div class="foot__grid">
     <div class="foot__brand">
-      <p class="foot__mark" dir="ltr">UFUQ<br />IMPERIUM</p>
-      <p class="quiet">{{ c.footer.blurb }}</p>
+      <img
+        class="foot__logo"
+        [src]="logo() || (i18n.lang() === 'ar' ? 'brand/logo-ar-light.png' : 'brand/logo-en-light.png')"
+        [alt]="site.companyName()"
+      />
+      <p class="quiet">{{ blurb() }}</p>
+      <app-social-links class="foot__social" [label]="c.footer.socialLabel" />
     </div>
 
     <nav class="foot__nav" [attr.aria-label]="c.footer.navLabel">
@@ -29,5 +34,5 @@
     </div>
   </div>
 
-  <p class="foot__copy">© {{ year }} {{ c.footer.rights }}</p>
+  <p class="foot__copy">© {{ year }} {{ rights() }}</p>
 </footer>

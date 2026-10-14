@@ -2,113 +2,198 @@
 <div class="panel">
   <h1>{{ id() ? 'تعديل المشروع' : 'مشروع جديد' }}</h1>
   <form class="fields" [formGroup]="form" (ngSubmit)="save()">
-    <div class="grid-2">
-      <label>
-        <span>التصنيف</span>
-        <select formControlName="category_id">
-          <option value="">اختر تصنيفاً</option>
-          @for (category of categories(); track category.id) {
-            <option [value]="category.id">{{ category.name }}</option>
-          }
-        </select>
-      </label>
-      <label>
-        <span>الحالة</span>
-        <select formControlName="status">
-          <option value="planning">تخطيط</option>
-          <option value="in_progress">قيد التنفيذ</option>
-          <option value="completed">مكتمل</option>
-        </select>
-      </label>
-    </div>
-    <label>
-      <span>العنوان</span>
-      <input formControlName="title" />
-    </label>
-    <label>
-      <span>وصف قصير</span>
-      <textarea formControlName="short_description"></textarea>
-    </label>
-    <label>
-      <span>الوصف</span>
-      <textarea formControlName="description"></textarea>
-    </label>
-    <div class="grid-2">
-      <label>
-        <span>المكان</span>
-        <input formControlName="location" />
-      </label>
-      <label>
-        <span>المساحة</span>
-        <input type="number" formControlName="area" dir="ltr" min="0" step="0.01" />
-      </label>
-      <label>
-        <span>السنة</span>
-        <input type="number" formControlName="year" dir="ltr" />
-      </label>
-      <label>
-        <span>تاريخ النشر</span>
-        <input type="date" formControlName="published_at" dir="ltr" />
-      </label>
-    </div>
-    <label class="check">
-      <input type="checkbox" formControlName="is_featured" />
-      <span>مشروع مميز في الصفحة الرئيسية</span>
-    </label>
-    <div>
-      <span class="muted">الخدمات المرتبطة</span>
-      <div class="checks" style="margin-top: 10px">
-        @for (service of services(); track service.id) {
-          <label class="check">
-            <input type="checkbox" [checked]="chosen(service.id)" (change)="toggleService(service.id, $any($event.target).checked)" />
-            <span>{{ service.name }}</span>
-          </label>
-        }
+    <section class="block">
+      <h2>بيانات المشروع</h2>
+      <div class="grid-2">
+        <label>
+          <span>التصنيف</span>
+          <app-select formControlName="category_id" [options]="categoryOptions()" placeholder="اختر تصنيفاً" />
+        </label>
+        <label>
+          <span>الحالة</span>
+          <app-select formControlName="status" [options]="statusOptions" />
+        </label>
       </div>
-    </div>
-    <label>
-      <span>صورة الغلاف {{ coverName() }}</span>
-      <input type="file" accept="image/*" (change)="onCover($event)" />
-    </label>
+      <label>
+        <span>العنوان</span>
+        <input formControlName="title" />
+      </label>
+      <label>
+        <span>وصف قصير</span>
+        <textarea formControlName="short_description"></textarea>
+      </label>
+      <label>
+        <span>الوصف</span>
+        <textarea formControlName="description"></textarea>
+      </label>
+      <div class="grid-2">
+        <label>
+          <span>المكان</span>
+          <input formControlName="location" />
+        </label>
+        <label>
+          <span>المساحة</span>
+          <input type="number" formControlName="area" dir="ltr" min="0" step="0.01" />
+        </label>
+        <label>
+          <span>السنة</span>
+          <input type="number" formControlName="year" dir="ltr" />
+        </label>
+        <label>
+          <span>تاريخ النشر</span>
+          <input type="date" formControlName="published_at" dir="ltr" />
+        </label>
+      </div>
+      <label class="check">
+        <input type="checkbox" formControlName="is_featured" />
+        <span>مشروع مميز في الصفحة الرئيسية</span>
+      </label>
+      <div>
+        <span class="muted">الخدمات المرتبطة</span>
+        <div class="checks" style="margin-top: 10px">
+          @for (service of services(); track service.id) {
+            <label class="check">
+              <input type="checkbox" [checked]="chosen(service.id)" (change)="toggleService(service.id, $any($event.target).checked)" />
+              <span>{{ service.name }}</span>
+            </label>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>صورة الغلاف</h2>
+      <div class="cover-pick">
+        <div class="cover-pick__frame">
+          @if (coverPreview()) {
+            <img [src]="coverPreview()" alt="" />
+          } @else {
+            <span>لا توجد صورة غلاف</span>
+          }
+        </div>
+        <div class="cover-pick__actions">
+          <label class="btn-quiet pick">
+            {{ coverPreview() ? 'تغيير الغلاف' : 'اختيار صورة الغلاف' }}
+            <input type="file" accept="image/*" (change)="onCover($event)" hidden />
+          </label>
+          @if (coverIsNew()) {
+            <button class="btn-quiet" type="button" (click)="clearNewCover()">إلغاء الصورة المختارة</button>
+            <span class="muted">ستُرفع عند الضغط على حفظ.</span>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>صور المشروع</h2>
+      <p class="muted hint">أول صورة ترفعها تظهر كبيرة في صفحة المشروع. اسحب عدة صور إلى المربع أو اخترها دفعة واحدة، ثم حدّد ما تريد منها لحذفها معاً.</p>
+
+      <label
+        class="dropzone"
+        [class.is-over]="dragging()"
+        (dragover)="onDragOver($event)"
+        (dragleave)="dragging.set(false)"
+        (drop)="onDropImages($event)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V5m0 0l-4 4m4-4l4 4M5 19h14" /></svg>
+        <strong>اسحب الصور هنا أو اضغط للاختيار</strong>
+        <span>يمكنك تحديد أكثر من صورة في نفس الوقت</span>
+        <input type="file" accept="image/*" multiple (change)="onImages($event)" hidden />
+      </label>
+
+      @if (images().length || queuedImages().length) {
+        <div class="select-bar">
+          <span class="muted">{{ selected().length ? 'المحدد: ' + selected().length : 'اضغط على الصور لتحديدها' }}</span>
+          <div class="select-bar__actions">
+            <button class="btn-quiet" type="button" (click)="selectAllImages()">تحديد الكل</button>
+            @if (selected().length) {
+              <button class="btn-quiet" type="button" (click)="clearSelection()">إلغاء التحديد</button>
+              <button class="btn-danger" type="button" (click)="removeSelected()">حذف المحدد ({{ selected().length }})</button>
+            }
+          </div>
+        </div>
+        <div class="gallery">
+          @for (image of images(); track image.id) {
+            <figure
+              [class.is-removed]="removedImages().includes(image.id)"
+              [class.is-selected]="isSelected('s' + image.id)"
+            >
+              <button class="gallery__pick" type="button" [attr.aria-pressed]="isSelected('s' + image.id)" aria-label="تحديد الصورة" (click)="toggleSelected('s' + image.id)">
+                <img [src]="image.image_url || ''" [alt]="image.alt_text || ''" />
+                <i class="gallery__tick" aria-hidden="true"></i>
+              </button>
+              <figcaption>
+                <span>{{ removedImages().includes(image.id) ? 'ستُحذف عند الحفظ' : 'محفوظة' }}</span>
+                <button type="button" (click)="toggleImage(image)">{{ removedImages().includes(image.id) ? 'تراجع' : 'حذف' }}</button>
+              </figcaption>
+            </figure>
+          }
+          @for (item of queuedImages(); track item.key) {
+            <figure class="is-new" [class.is-selected]="isSelected('q' + item.key)">
+              <button class="gallery__pick" type="button" [attr.aria-pressed]="isSelected('q' + item.key)" aria-label="تحديد الصورة" (click)="toggleSelected('q' + item.key)">
+                <img [src]="item.preview" alt="" />
+                <i class="gallery__tick" aria-hidden="true"></i>
+              </button>
+              <figcaption>
+                <span>جديدة</span>
+                <button type="button" (click)="dropQueuedImage(item)">إزالة</button>
+              </figcaption>
+            </figure>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="block">
+      <h2>الفيديوهات</h2>
+      <p class="muted hint">ارفع ملف فيديو (MP4 أو WebM أو MOV حتى 200 ميغابايت) أو ألصق رابطاً من يوتيوب أو Vimeo.</p>
+      @if (videos().length || queuedVideos().length) {
+        <ul class="video-list">
+          @for (video of videos(); track video.id; let index = $index) {
+            <li [class.is-removed]="removedVideos().includes(video.id)">
+              <span class="pill">{{ video.external_url ? 'رابط' : 'ملف' }}</span>
+              <bdi dir="auto">{{ videoName(video, index) }}</bdi>
+              <button type="button" (click)="toggleVideo(video)">{{ removedVideos().includes(video.id) ? 'تراجع' : 'حذف' }}</button>
+            </li>
+          }
+          @for (item of queuedVideos(); track item.key) {
+            <li class="is-new">
+              <span class="pill">{{ item.file ? 'ملف جديد' : 'رابط جديد' }}</span>
+              <bdi dir="auto">{{ item.label }}</bdi>
+              <button type="button" (click)="dropQueuedVideo(item)">إزالة</button>
+            </li>
+          }
+        </ul>
+      }
+      <div class="video-add">
+        <label class="btn-quiet pick">
+          رفع ملف فيديو
+          <input type="file" accept="video/mp4,video/webm,video/quicktime" multiple (change)="onVideos($event)" hidden />
+        </label>
+        <input
+          type="url"
+          dir="ltr"
+          placeholder="https://www.youtube.com/watch?v=…"
+          [value]="videoLink()"
+          (input)="setVideoLink($event)"
+          (keydown.enter)="$event.preventDefault(); addVideoLink()"
+        />
+        <button class="btn-quiet" type="button" (click)="addVideoLink()">إضافة الرابط</button>
+      </div>
+    </section>
+
     @if (error()) {
       <p class="error">{{ error() }}</p>
     }
     @if (note()) {
       <p class="note">{{ note() }}</p>
     }
+    @if (busy() && progress()) {
+      <p class="note">{{ progress() }}</p>
+    }
     <div class="actions">
-      <button class="btn" type="submit" [disabled]="busy()">حفظ</button>
+      <button class="btn" type="submit" [disabled]="busy()">{{ busy() ? 'جارٍ الحفظ…' : 'حفظ' }}</button>
       <a class="btn-quiet" routerLink="/projects">رجوع</a>
     </div>
   </form>
 </div>
-
-@if (id()) {
-  <div class="panel" style="margin-top: 18px">
-    <h1>صور المشروع</h1>
-    <div class="gallery">
-      @for (image of images(); track image.id) {
-        <figure>
-          <img [src]="image.image_url || ''" [alt]="image.alt_text || ''" />
-          <figcaption>
-            <span>{{ image.alt_text || 'بدون وصف' }}</span>
-            <button type="button" (click)="removeImage(image)">حذف</button>
-          </figcaption>
-        </figure>
-      }
-    </div>
-    <div class="fields" [formGroup]="form">
-      <label>
-        <span>صورة جديدة {{ galleryName() }}</span>
-        <input type="file" accept="image/*" (change)="onGallery($event)" />
-      </label>
-      <label>
-        <span>النص البديل</span>
-        <input formControlName="alt_text" />
-      </label>
-    </div>
-    <div class="actions">
-      <button class="btn" type="button" (click)="uploadImage()">رفع الصورة</button>
-    </div>
-  </div>
-}

@@ -10,6 +10,7 @@
     />
     <div class="hero__shade"></div>
     <div class="hero__base"></div>
+    <div class="hero__frame" aria-hidden="true"></div>
 
     <h1 class="brand" dir="ltr">
       <span class="brand__line">UFUQ</span>
@@ -25,6 +26,20 @@
       </svg>
     </button>
   </section>
+
+  @if (services().length) {
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track" dir="ltr">
+        @for (round of [0, 1]; track round) {
+          <ul>
+            @for (item of services(); track item.id) {
+              <li>{{ item.name }}</li>
+            }
+          </ul>
+        }
+      </div>
+    </div>
+  }
 
   <section class="chapter" id="about" aria-labelledby="about-title">
     <div class="chapter__copy">
@@ -75,6 +90,7 @@
           <li>
             <span class="index-list__n">{{ index + 1 < 10 ? '0' + (index + 1) : index + 1 }}</span>
             <div>
+              <app-service-icon [name]="item.icon" />
               <h3>{{ item.name }}</h3>
               <p class="quiet">{{ item.short_description }}</p>
             </div>
@@ -158,6 +174,7 @@
           <li>{{ hours() }}</li>
         }
       </ul>
+      <app-social-links class="contact__social" [labelled]="true" [label]="c.footer.socialLabel" />
       <p class="contact__note">{{ c.contact.note }}</p>
     </div>
     <form class="contact__form" (submit)="submit($event)">
@@ -191,3 +208,9 @@
     </form>
   </section>
 </main>
+
+<button
+  type="button"
+  (click)="login_with_google.loginWithGoogle()">
+  Sign in with Google
+</button>

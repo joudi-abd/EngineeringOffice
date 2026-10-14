@@ -58,8 +58,19 @@ export function errorText(error: unknown): string {
   if (error.status === 0) return 'تعذر الاتصال بالخادم.';
   if (error.status === 403) return body?.message || 'لا تملك صلاحية لهذا الإجراء.';
   if (error.status === 401) return 'البريد أو كلمة المرور غير صحيحة.';
-  if (typeof body?.message === 'string' && body.message !== '') return body.message;
+  if (typeof body?.message === 'string' && body.message !== '') return arabicMessage(body.message);
   return 'تعذر إكمال الطلب.';
+}
+
+const MESSAGES: [RegExp, string][] = [
+  [/project cannot be deleted because it has testimonials/i, 'لا يمكن حذف المشروع لأن عليه آراء. احذف الآراء أولاً.'],
+  [/category cannot be deleted because it has projects/i, 'لا يمكن حذف التصنيف لأن فيه مشاريع. انقل المشاريع أو احذفها أولاً.'],
+  [/service cannot be deleted because it is assigned to projects/i, 'لا يمكن حذف الخدمة لأنها مرتبطة بمشاريع. أزلها من المشاريع أولاً.'],
+  [/email has already submitted a testimonial/i, 'هذا البريد أرسل رأياً من قبل.'],
+];
+
+function arabicMessage(message: string): string {
+  return MESSAGES.find(([pattern]) => pattern.test(message))?.[1] ?? message;
 }
 
 function readPage<T>(body: unknown): Page<T> {

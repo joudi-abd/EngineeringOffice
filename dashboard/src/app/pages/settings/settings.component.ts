@@ -1,15 +1,31 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { concat, toArray } from 'rxjs';
 import { ApiConfig } from '../../core/api-config';
 import { ApiService, errorText } from '../../core/api.service';
 import { Setting } from '../../core/models';
 
+/** Settings managed on this page (anything else the server returns is left alone). */
+const MANAGED_KEYS = new Set([
+  'company_name',
+  'company_description',
+  'phone',
+  'email',
+  'address',
+  'whatsapp',
+  'hours',
+  'facebook',
+  'instagram',
+  'logo',
+]);
+
 const DAY_OPTIONS = ['الأحد – الخميس', 'الإثنين – الجمعة', 'السبت – الخميس', 'كل الأيام'];
+
+import { SelectComponent, SelectOption } from '../../layout/select.component';
 
 @Component({
   selector: 'app-settings',
-  imports: [FormsModule],
+  imports: [FormsModule, SelectComponent],
   templateUrl: './settings.component.html',
 })
 export class SettingsComponent implements OnInit {
@@ -17,6 +33,10 @@ export class SettingsComponent implements OnInit {
   private readonly config = inject(ApiConfig);
 
   protected readonly dayOptions = DAY_OPTIONS;
+  protected readonly dayChoices: SelectOption[] = [
+    ...DAY_OPTIONS.map((option) => ({ value: option, label: option })),
+    { value: 'custom', label: 'أيام أخرى' },
+  ];
   protected readonly values = signal<Record<string, string>>({});
   protected readonly days = signal(DAY_OPTIONS[0]);
   protected readonly customDays = signal('');
@@ -38,6 +58,7 @@ export class SettingsComponent implements OnInit {
       next: (page) => {
         const next: Record<string, string> = {};
         for (const item of page.items) {
+          if (!MANAGED_KEYS.has(item.key)) continue;
           next[item.key] = item.value ?? '';
           this.types.set(item.key, item.type || 'string');
         }
@@ -60,8 +81,8 @@ export class SettingsComponent implements OnInit {
     this.saved.set('');
   }
 
-  protected setDays(event: Event): void {
-    this.days.set((event.target as HTMLSelectElement).value);
+  protected setDays(value: string): void {
+    this.days.set(value);
     this.showHours.set(true);
     this.saved.set('');
   }
@@ -107,6 +128,16 @@ export class SettingsComponent implements OnInit {
     this.saved.set('');
   }
 
+  /** Warning shown under an account field when the value cannot become a link on the site. */
+  protected socialWarning(key: string): string {
+    const text = (this.values()[key] ?? '').trim();
+    if (!text) return '';
+    if (/^https?:\/\//i.test(text)) return '';
+    if (/^([a-z0-9-]+\.)+[a-z]{2,}(\/|$)/i.test(text)) return '';
+    if (/^@?[A-Za-z0-9._-]{2,60}$/.test(text)) return '';
+    return 'لن يظهر في الموقع: أدخل رابط الصفحة أو اسم المستخدم فقط (وليس بريداً إلكترونياً).';
+  }
+
   protected save(): void {
     this.busy.set(true);
     this.error.set('');
@@ -126,7 +157,8 @@ export class SettingsComponent implements OnInit {
       });
     });
 
-    forkJoin(calls).subscribe({
+    // One write at a time: parallel writes can collide on the database lock.
+    concat(...calls).pipe(toArray()).subscribe({
       next: (saved) => {
         const next = { ...current };
         for (const item of saved) {

@@ -5,6 +5,10 @@ import { firstValueFrom } from 'rxjs';
 import { routes } from './app.routes';
 import { ApiConfig } from './core/api-config';
 import { SiteApi } from './core/site-api.service';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { environment } from '../environments/environment';
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -13,6 +17,8 @@ export const appConfig: ApplicationConfig = {
       anchorScrolling: 'enabled',
       scrollPositionRestoration: 'top',
     })),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
     provideHttpClient(),
     provideAppInitializer(() => {
       const config = inject(ApiConfig);

@@ -1,5 +1,6 @@
 import { Component, ElementRef, HostListener, OnDestroy, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { LanguageService } from '../../core/language.service';
@@ -14,6 +15,7 @@ import { Project, Testimonial, paragraphs } from '../../core/site-content';
 })
 export class ProjectDetailComponent implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
+  private readonly sanitizer = inject(DomSanitizer);
   protected readonly i18n = inject(LanguageService);
   protected readonly site = inject(SiteApi);
   private readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('reviewDialog');
@@ -27,8 +29,13 @@ export class ProjectDetailComponent implements OnDestroy {
   protected readonly error = signal('');
   protected readonly thanks = signal(false);
   protected readonly status = signal<'loading' | 'ready' | 'missing'>('loading');
-  protected readonly record = signal<Project | null>(null);
-  protected readonly reviews = signal<Testimonial[]>([]);
+  protected readonly rawRecord = signal<Project | null>(null);
+  protected readonly rawReviews = signal<Testimonial[]>([]);
+  protected readonly record = computed(() => {
+    const project = this.rawRecord();
+    return project ? this.site.localizeProject(project) : null;
+  });
+  protected readonly reviews = computed(() => this.rawReviews().map((review) => this.site.localizeReview(review)));
   protected readonly viewer = signal<number | null>(null);
   private touchX = 0;
   private swiped = false;
@@ -55,14 +62,35 @@ export class ProjectDetailComponent implements OnDestroy {
     return cover ? [{ id: 0, src: cover, alt: project.title }] : [];
   });
 
-  protected readonly mosaic = computed(() => {
-    const images = this.gallery().map((image, index) => ({ ...image, index }));
-    const groups: GalleryShot[][] = [];
-    for (let start = 0; start < images.length; start += 3) {
-      groups.push(images.slice(start, start + 3));
-    }
-    return groups;
+  protected readonly videoItems = computed(() => {
+    const project = this.record();
+    if (!project) return [] as VideoShot[];
+    return [...(project.videos ?? [])]
+      .sort((a, b) => a.id - b.id)
+      .flatMap((video): VideoShot[] => {
+        const title = video.title || project.title;
+        const file = this.site.media(video.video_url || video.video_path);
+        if (file) return [{ id: video.id, kind: 'file', src: file, embed: null, title }];
+        const link = (video.external_url ?? '').trim();
+        if (!/^https?:\/\//i.test(link)) return [];
+        const embed = embedUrl(link);
+        return [
+          embed
+            ? { id: video.id, kind: 'embed', src: link, embed: this.sanitizer.bypassSecurityTrustResourceUrl(embed), title }
+            : { id: video.id, kind: 'link', src: link, embed: null, title },
+        ];
+      });
   });
+
+  /** First three images, shown the way Facebook lays out a post's photos. */
+  protected readonly preview = computed(() =>
+    this.gallery()
+      .slice(0, 3)
+      .map((image, index) => ({ ...image, index })),
+  );
+
+  /** Images beyond the first three; shown as "+N" over the last tile. */
+  protected readonly extra = computed(() => Math.max(0, this.gallery().length - 3));
 
   protected readonly current = computed(() => {
     const images = this.gallery();
@@ -75,8 +103,8 @@ export class ProjectDetailComponent implements OnDestroy {
     effect((onCleanup) => {
       const slug = this.slug();
       this.status.set('loading');
-      this.record.set(null);
-      this.reviews.set([]);
+      this.rawRecord.set(null);
+      this.rawReviews.set([]);
       this.viewer.set(null);
       let reviewsSub: { unsubscribe(): void } | undefined;
       if (!slug) {
@@ -84,11 +112,11 @@ export class ProjectDetailComponent implements OnDestroy {
         return;
       }
       const sub = this.site.project(slug).subscribe((project) => {
-        this.record.set(project);
+        this.rawRecord.set(project);
         this.status.set(project ? 'ready' : 'missing');
         reviewsSub?.unsubscribe();
         if (!project) return;
-        reviewsSub = this.site.reviews(project.id).subscribe((items) => this.reviews.set(items));
+        reviewsSub = this.site.reviews(project.id).subscribe((items) => this.rawReviews.set(items));
       });
       onCleanup(() => {
         sub.unsubscribe();
@@ -192,7 +220,7 @@ export class ProjectDetailComponent implements OnDestroy {
       next: () => {
         this.thanks.set(true);
         this.dialog()?.nativeElement.close();
-        this.site.reviews(project.id).subscribe((items) => this.reviews.set(items));
+        this.site.reviews(project.id).subscribe((items) => this.rawReviews.set(items));
       },
       error: (error: unknown) => {
         this.error.set(httpStatus(error) === 409 ? detail.emailTaken : detail.failed);
@@ -232,4 +260,34 @@ interface GalleryShot {
   src: string;
   alt: string;
   index?: number;
+}
+
+interface VideoShot {
+  id: number;
+  kind: 'file' | 'embed' | 'link';
+  src: string;
+  embed: SafeResourceUrl | null;
+  title: string;
+}
+
+function embedUrl(link: string): string | null {
+  let url: URL;
+  try {
+    url = new URL(link);
+  } catch {
+    return null;
+  }
+  const host = url.hostname.replace(/^www\./, '').replace(/^m\./, '');
+  let id = '';
+  if (host === 'youtu.be') id = url.pathname.split('/')[1] ?? '';
+  else if (host === 'youtube.com' || host === 'youtube-nocookie.com') {
+    const parts = url.pathname.split('/').filter(Boolean);
+    id = url.searchParams.get('v') ?? (['embed', 'shorts', 'live'].includes(parts[0]) ? parts[1] ?? '' : '');
+  }
+  if (/^[\w-]{6,20}$/.test(id)) return `https://www.youtube-nocookie.com/embed/${id}`;
+  if (host === 'vimeo.com' || host === 'player.vimeo.com') {
+    const vimeo = url.pathname.split('/').filter(Boolean).find((part) => /^\d+$/.test(part));
+    if (vimeo) return `https://player.vimeo.com/video/${vimeo}`;
+  }
+  return null;
 }
