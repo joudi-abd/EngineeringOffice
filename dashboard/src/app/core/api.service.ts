@@ -54,15 +54,26 @@ export function errorText(error: unknown): string {
   if (!(error instanceof HttpErrorResponse)) return 'تعذر إكمال الطلب.';
   const body = error.error as { message?: string; errors?: Record<string, string[]> } | null;
   const first = body?.errors ? Object.values(body.errors)[0] : undefined;
-  if (Array.isArray(first) && first[0]) return first[0];
+  if (Array.isArray(first) && first[0]) return arabicMessage(first[0]);
   if (error.status === 0) return 'تعذر الاتصال بالخادم.';
-  if (error.status === 403) return body?.message || 'لا تملك صلاحية لهذا الإجراء.';
+  if (error.status === 403) {
+    const message = typeof body?.message === 'string' ? arabicMessage(body.message) : '';
+    return message || 'لا تملك صلاحية لهذا الإجراء.';
+  }
   if (error.status === 401) return 'البريد أو كلمة المرور غير صحيحة.';
   if (typeof body?.message === 'string' && body.message !== '') return arabicMessage(body.message);
   return 'تعذر إكمال الطلب.';
 }
 
 const MESSAGES: [RegExp, string][] = [
+  [/please verify your email/i, 'فعّل بريدك قبل تسجيل الدخول.'],
+  [/account is inactive/i, 'الحساب غير نشط. تواصل مع مدير الموقع.'],
+  [/please wait before requesting another reset code/i, 'انتظر دقيقة قبل طلب رمز جديد.'],
+  [/unable to send the reset email/i, 'تعذر إرسال رسالة إعادة التعيين. حاول لاحقاً.'],
+  [/reset code is incorrect/i, 'رمز إعادة التعيين غير صحيح.'],
+  [/reset code has expired/i, 'انتهت صلاحية رمز إعادة التعيين.'],
+  [/too many attempts/i, 'تجاوزت عدد المحاولات. اطلب رمزاً جديداً.'],
+  [/no reset code was found/i, 'لا يوجد رمز صالح. اطلب رمزاً جديداً.'],
   [/project cannot be deleted because it has testimonials/i, 'لا يمكن حذف المشروع لأن عليه آراء. احذف الآراء أولاً.'],
   [/category cannot be deleted because it has projects/i, 'لا يمكن حذف التصنيف لأن فيه مشاريع. انقل المشاريع أو احذفها أولاً.'],
   [/service cannot be deleted because it is assigned to projects/i, 'لا يمكن حذف الخدمة لأنها مرتبطة بمشاريع. أزلها من المشاريع أولاً.'],
