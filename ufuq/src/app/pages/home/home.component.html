@@ -177,7 +177,7 @@
       <app-social-links class="contact__social" [labelled]="true" [label]="c.footer.socialLabel" />
       <p class="contact__note">{{ c.contact.note }}</p>
     </div>
-    <form class="contact__form" (submit)="submit($event)">
+    <form class="contact__form" novalidate (submit)="submit($event)">
       <label>
         <span>{{ c.contact.name }}</span>
         <input [value]="name()" (input)="setField('name', $event)" autocomplete="name" required />
@@ -208,9 +208,3 @@
     </form>
   </section>
 </main>
-
-<button
-  type="button"
-  (click)="login_with_google.loginWithGoogle()">
-  Sign in with Google
-</button>

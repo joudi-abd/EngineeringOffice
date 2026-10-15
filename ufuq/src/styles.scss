@@ -1,77 +1,35 @@
+@use './theme';
 @use './luxury';
 
+/* Montserrat (Latin) and Cairo (Arabic): both geometric, with the squared, heavy
+   construction of the UFUQ and أفق wordmarks. Self-hosted variable fonts, subset to the
+   scripts the site uses (SIL Open Font License, see public/fonts). */
 @font-face {
-  font-family: "29LT Bukra";
-  src: url("/fonts/bukra-light.ttf") format("truetype");
-  font-weight: 300;
+  font-family: "Montserrat";
+  src: url("/fonts/montserrat-var.woff2") format("woff2");
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "29LT Bukra";
-  src: url("/fonts/bukra-regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "29LT Bukra";
-  src: url("/fonts/bukra-bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Neue Power";
-  src: url("/fonts/neue-power-light.ttf") format("truetype");
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Neue Power";
-  src: url("/fonts/neue-power-regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Neue Power";
-  src: url("/fonts/neue-power-medium.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Neue Power";
-  src: url("/fonts/neue-power-bold.ttf") format("truetype");
-  font-weight: 700;
+  font-family: "Cairo";
+  src: url("/fonts/cairo-var.woff2") format("woff2");
+  font-weight: 200 1000;
   font-style: normal;
   font-display: swap;
 }
 
 :root {
-  --ink: #000000;
-  --ink-2: #141414;
-  --paper: #f2f0eb;
-  --muted: rgba(242, 240, 235, 0.72);
-  --gold: #aa8e69;
-  --gold-deep: #7d5d3b;
-  --gold-soft: #cbb892;
-  --line: rgba(242, 240, 235, 0.16);
-  --serif: "Neue Power", "29LT Bukra", "Helvetica Neue", Arial, sans-serif;
-  --sans: "Neue Power", "29LT Bukra", "Helvetica Neue", Arial, sans-serif;
+  --body-weight: 400;
+  --latin: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --serif: "Montserrat", "Cairo", "Helvetica Neue", Arial, sans-serif;
+  --sans: "Montserrat", "Cairo", "Helvetica Neue", Arial, sans-serif;
 }
 
 html[lang='ar'] {
-  --serif: "29LT Bukra", "Neue Power", sans-serif;
-  --sans: "29LT Bukra", "Neue Power", sans-serif;
+  --serif: "Cairo", "Montserrat", sans-serif;
+  --sans: "Cairo", "Montserrat", sans-serif;
 }
 
 *,
@@ -89,8 +47,14 @@ body {
   background: var(--ink);
   color: var(--paper);
   font-family: var(--sans);
-  font-weight: 400;
+  font-weight: var(--body-weight);
   line-height: 1.65;
+}
+
+/* Arabic is cursive: any tracking pulls the joined letters apart, so it is never tracked.
+   The Latin hero title and the code inputs keep theirs. */
+html[lang='ar'] body *:not(.brand):not(.brand *):not(input):not(textarea) {
+  letter-spacing: 0 !important;
 }
 
 html[lang='ar'] body {
@@ -109,7 +73,7 @@ img {
 
 ::selection {
   background: rgba(170, 142, 105, 0.35);
-  color: #fff;
+  color: var(--hot);
 }
 
 :focus-visible {
@@ -134,7 +98,7 @@ main:focus {
   flex-direction: column;
   height: 100%;
   padding: 0 0 20px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0));
+  background: linear-gradient(180deg, var(--glass), transparent);
   border: 1px solid var(--line);
   border-radius: 0;
   transition: border-color 0.5s ease, background 0.5s ease;
@@ -153,7 +117,7 @@ main:focus {
   border-radius: 0;
   background:
     radial-gradient(circle at 50% 38%, rgba(170, 142, 105, 0.28), transparent 58%),
-    #000000;
+    var(--tile);
 }
 
 .member img {
@@ -207,15 +171,19 @@ main:focus {
   letter-spacing: 0;
 }
 
+html:not([lang='ar']) .display {
+  letter-spacing: -0.01em;
+}
+
 .quiet {
   color: var(--muted);
   font-size: 15px;
-  font-weight: 300;
+  font-weight: var(--body-weight);
   line-height: 1.75;
 }
 
 .text-link {
-  color: #fff;
+  color: var(--hot);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.16em;

@@ -4,6 +4,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { LanguageService } from '../../core/language.service';
+import { AuthGate } from '../../core/auth-gate';
+import { AuthService } from '../../core/auth.service';
 import { httpStatus, SiteApi } from '../../core/site-api.service';
 import { Project, Testimonial, paragraphs } from '../../core/site-content';
 
@@ -18,6 +20,8 @@ export class ProjectDetailComponent implements OnDestroy {
   private readonly sanitizer = inject(DomSanitizer);
   protected readonly i18n = inject(LanguageService);
   protected readonly site = inject(SiteApi);
+  private readonly gate = inject(AuthGate);
+  private readonly auth = inject(AuthService);
   private readonly dialog = viewChild<ElementRef<HTMLDialogElement>>('reviewDialog');
 
   protected readonly stars = [1, 2, 3, 4, 5];
@@ -185,10 +189,24 @@ export class ProjectDetailComponent implements OnDestroy {
     return this.site.media(image.image_url || image.image_path);
   }
 
-  protected choose(value: number): void {
+  /**
+   * A star opens the review form, but writing a review needs an account. A guest gets the sign-in window
+   * first; the stars they picked are kept, and the form opens by itself once they are signed in.
+   */
+  protected async choose(value: number): Promise<void> {
     this.rating.set(value);
     this.error.set('');
+    if (!(await this.gate.ensure('review'))) return;
+    this.fillFromAccount();
     this.dialog()?.nativeElement.showModal();
+  }
+
+  /** Fills the name and email of the review with the ones from the account. */
+  private fillFromAccount(): void {
+    const user = this.auth.user();
+    if (!user) return;
+    if (!this.name().trim()) this.name.set(this.auth.displayName());
+    if (!this.email().trim()) this.email.set(user.email);
   }
 
   protected setField(field: 'name' | 'email' | 'text', event: Event): void {
@@ -204,8 +222,10 @@ export class ProjectDetailComponent implements OnDestroy {
     this.error.set('');
   }
 
-  protected submit(event: Event): void {
+  protected async submit(event: Event): Promise<void> {
     event.preventDefault();
+    // The session may have ended while the form was open (signed out in another tab, token expired).
+    if (!(await this.gate.ensure('review'))) return;
     const detail = this.i18n.content().projectsPage.detail;
     const project = this.record();
     const client_name = this.name().trim();

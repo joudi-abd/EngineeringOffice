@@ -1,0 +1,19 @@
+@use './theme-vars' as t;
+
+:root {
+  @include t.palette(t.$dark);
+  color-scheme: dark;
+}
+
+html[data-theme='light'] {
+  @include t.palette(t.$light);
+  color-scheme: light;
+}
+
+/* A short fade when the visitor flips the theme, never on first paint. */
+html.theme-fade,
+html.theme-fade *,
+html.theme-fade *::before,
+html.theme-fade *::after {
+  transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, fill 0.35s ease !important;
+}

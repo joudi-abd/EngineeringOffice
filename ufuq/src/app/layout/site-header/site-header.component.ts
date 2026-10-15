@@ -1,14 +1,18 @@
 import { Component, HostListener, OnDestroy, computed, inject, signal } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AuthService } from '../../core/auth.service';
+import { AUTH_COPY } from '../../core/auth-content';
 import { LanguageService } from '../../core/language.service';
 import { SiteApi } from '../../core/site-api.service';
 import { NavItem, telHref } from '../../core/site-content';
 import { SectionNav } from '../../core/section-nav';
+import { THEME_COPY, ThemeService } from '../../core/theme.service';
 
 @Component({
   selector: 'app-site-header',
+  imports: [RouterLink],
   templateUrl: './site-header.component.html',
   styleUrl: './site-header.component.scss',
 })
@@ -16,6 +20,10 @@ export class SiteHeaderComponent implements OnDestroy {
   protected readonly i18n = inject(LanguageService);
   protected readonly sections = inject(SectionNav);
   protected readonly site = inject(SiteApi);
+  protected readonly auth = inject(AuthService);
+  protected readonly theme = inject(ThemeService);
+  protected readonly account = computed(() => AUTH_COPY[this.i18n.lang()].account);
+  protected readonly themeCopy = computed(() => THEME_COPY[this.i18n.lang()]);
   private readonly router = inject(Router);
   protected readonly phone = computed(() => this.site.setting('phone'));
   protected readonly phoneLink = computed(() => telHref(this.phone()));
@@ -25,6 +33,11 @@ export class SiteHeaderComponent implements OnDestroy {
   protected readonly menuOpen = signal(false);
   protected readonly active = signal('top');
   protected readonly path = signal(this.currentPath());
+  /** The hero follows the theme too, so the light-on-dark logo is only right in the dark theme. */
+  protected readonly artwork = computed(() => {
+    const light = this.theme.theme() === 'dark' ? 'light' : 'dark';
+    return this.i18n.lang() === 'ar' ? `brand/logo-ar-${light}.png` : `brand/logo-en-${light}-compact.png`;
+  });
 
   constructor() {
     this.router.events.pipe(
@@ -66,6 +79,11 @@ export class SiteHeaderComponent implements OnDestroy {
 
   private currentPath(): string {
     return this.router.url.split(/[?#]/)[0] || '/';
+  }
+
+  protected signOut(): void {
+    this.closeMenu();
+    void this.auth.logout();
   }
 
   protected closeMenu(): void {

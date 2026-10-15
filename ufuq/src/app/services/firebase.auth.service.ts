@@ -1,76 +1,29 @@
 import { Injectable, inject } from '@angular/core';
+import { Auth, GoogleAuthProvider, signInWithPopup, signOut } from '@angular/fire/auth';
 
-import {
-  Auth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut
-} from '@angular/fire/auth';
-
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
-import { firstValueFrom } from 'rxjs';
-
-export interface LaravelUser {
-  id: number;
-  name: string;
-  email: string;
-}
-
-export interface LaravelAuthResponse {
-  success: boolean;
-  message: string;
-  data: {
-    user: LaravelUser;
-    token: string;
-    token_type: string;
-  };
-}
-
-@Injectable({
-  providedIn: 'root'
-})
+/**
+ * The Google side of signing in. It only talks to Firebase: it opens Google's window and hands back the
+ * Firebase ID token. Turning that token into an account session is the job of `AuthService`
+ * (POST /auth/google), so the rest of the site never touches Firebase directly.
+ */
+@Injectable({ providedIn: 'root' })
 export class FirebaseAuthService {
-  private auth = inject(Auth);
-  private http = inject(HttpClient);
+  private readonly auth = inject(Auth);
 
-  private apiUrl = `${environment.apiUrl}/auth/google`;
-
-
-  async loginWithGoogle(): Promise<LaravelAuthResponse> {
+  /** Opens Google's account chooser and returns the Firebase ID token. Rejects with the Firebase error. */
+  async googleIdToken(): Promise<string> {
     const provider = new GoogleAuthProvider();
-
-    const credential = await signInWithPopup(
-      this.auth,
-      provider
-    );
-
-
-    const idToken = await credential.user.getIdToken();
-
-    const response = await firstValueFrom(
-      this.http.post<LaravelAuthResponse>(
-        this.apiUrl,
-        {
-          id_token: idToken
-        }
-      )
-    );
-
-    console.log(response);
-
-    localStorage.setItem(
-      'access_token',
-      response.data.token
-    );
-
-    return response;
+    provider.setCustomParameters({ prompt: 'select_account' });
+    const credential = await signInWithPopup(this.auth, provider);
+    return credential.user.getIdToken();
   }
 
-
-  async logout(): Promise<void> {
-    localStorage.removeItem('access_token');
-
-    await signOut(this.auth);
+  /** Ends the Firebase session too, so the next Google sign-in asks which account to use. */
+  async signOut(): Promise<void> {
+    try {
+      await signOut(this.auth);
+    } catch {
+      /* nothing to end */
+    }
   }
 }

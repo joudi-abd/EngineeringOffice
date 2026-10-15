@@ -1,0 +1,214 @@
+/*
+ * Form language of the site: one set of fields and buttons used by the contact form, the review sheet,
+ * the sign-in window and the page controls, so they all look like they belong to the same house.
+ *
+ *   field            text inputs and text areas: soft glass fill, hairline border, gold focus ring
+ *   button-primary   the one main action of a form: warm gold, lifts on hover
+ *   button-outline   a quieter action next to a primary one
+ *   button-neutral   a plain action such as "continue with Google"
+ *   button-pill      filters and small controls
+ *   checkbox         the consent box
+ */
+
+$radius: 12px;
+$radius-sheet: 18px;
+$hairline: var(--hairline);
+$glass: var(--glass);
+$gold-line: rgba(170, 142, 105, 0.6);
+
+@mixin arabic {
+  html[lang='ar'] & {
+    @content;
+  }
+}
+
+@mixin field {
+  width: 100%;
+  padding: 13px 16px;
+  color: var(--paper);
+  background: $glass;
+  border: 1px solid $hairline;
+  border-radius: $radius;
+  font: inherit;
+  line-height: 1.5;
+  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+
+  &::placeholder {
+    color: color-mix(in srgb, var(--paper) 40%, transparent);
+  }
+
+  &:hover:not(:focus):not(:disabled) {
+    border-color: rgba(170, 142, 105, 0.65);
+  }
+
+  &:focus {
+    outline: none;
+    background: rgba(170, 142, 105, 0.07);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(170, 142, 105, 0.2);
+  }
+
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--paper);
+    caret-color: var(--paper);
+    box-shadow: 0 0 0 100px var(--surface) inset;
+    transition: background-color 9999s ease 0s;
+  }
+}
+
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 12px 30px;
+  border: 1px solid transparent;
+  border-radius: $radius;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.3s var(--ease), color 0.3s ease, background 0.3s ease, border-color 0.3s ease,
+    box-shadow 0.3s ease, filter 0.3s ease;
+
+  @include arabic {
+    font-size: 16px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: progress;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+@mixin button-primary {
+  @include button-base;
+  color: #0a0908;
+  background: var(--gold-grad);
+  box-shadow: 0 10px 28px rgba(170, 142, 105, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: 0 16px 36px rgba(170, 142, 105, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.36);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--gold-soft);
+    outline-offset: 3px;
+  }
+}
+
+@mixin button-outline {
+  @include button-base;
+  color: var(--gold-soft);
+  background: transparent;
+  border-color: $gold-line;
+
+  &:hover:not(:disabled) {
+    color: var(--hot);
+    background: rgba(170, 142, 105, 0.14);
+    border-color: var(--gold);
+  }
+}
+
+@mixin button-neutral {
+  @include button-base;
+  gap: 12px;
+  width: 100%;
+  color: var(--paper);
+  background: $glass;
+  border-color: $hairline;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+
+  @include arabic {
+    font-size: 16px;
+  }
+
+  &:hover:not(:disabled) {
+    background: rgba(170, 142, 105, 0.1);
+    border-color: var(--gold);
+  }
+}
+
+@mixin button-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 20px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid $hairline;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  cursor: pointer;
+  transition: color 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+
+  &:hover,
+  &.is-on {
+    color: var(--gold-soft);
+    background: rgba(170, 142, 105, 0.12);
+    border-color: var(--gold);
+  }
+}
+
+@mixin checkbox {
+  appearance: none;
+  flex: none;
+  display: inline-grid;
+  place-content: center;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  background: $glass;
+  border: 1px solid color-mix(in srgb, var(--paper) 35%, transparent);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+
+  &::after {
+    content: '';
+    width: 10px;
+    height: 5px;
+    margin-top: -2px;
+    border: solid #0a0908;
+    border-width: 0 0 2px 2px;
+    transform: rotate(-45deg) scale(0);
+    transition: transform 0.2s var(--ease);
+  }
+
+  &:hover {
+    border-color: var(--gold);
+  }
+
+  &:checked {
+    background: var(--gold-soft);
+    border-color: var(--gold-soft);
+  }
+
+  &:checked::after {
+    transform: rotate(-45deg) scale(1);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(170, 142, 105, 0.3);
+  }
+}

@@ -27,26 +27,11 @@
 .filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 22px;
-  margin-bottom: 12px;
+  gap: 10px 12px;
+  margin-bottom: 20px;
 }
 
-.filters button {
-  padding: 0 0 8px;
-  color: var(--muted);
-  background: none;
-  border: 0;
-  border-bottom: 1px solid transparent;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.filters button.is-on,
-.filters button:hover {
-  color: var(--gold-soft);
-  border-bottom-color: var(--gold);
-}
+/* Filter pills are styled by forms.scss through luxury.scss. */
 
 .archive ol {
   margin: 0;
@@ -80,7 +65,7 @@
 .archive figure {
   margin: 0;
   overflow: hidden;
-  background: #0b0a09;
+  background: var(--tile);
 }
 
 .archive img {
@@ -117,7 +102,7 @@
 }
 
 .next {
-  background: #0b0a09;
+  background: var(--ink-3);
   border-top: 1px solid var(--line);
 }
 

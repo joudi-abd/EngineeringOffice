@@ -1,12 +1,13 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthGate } from '../../core/auth-gate';
+import { AuthService } from '../../core/auth.service';
 import { SiteApi } from '../../core/site-api.service';
 import { LanguageService } from '../../core/language.service';
 import { gmailHref, telHref, whatsappHref } from '../../core/site-content';
 import { SectionNav } from '../../core/section-nav';
 import { ServiceIconComponent } from '../../layout/service-icon/service-icon.component';
 import { SocialLinksComponent } from '../../layout/social-links/social-links.component';
-import { FirebaseAuthService } from '../../services/firebase.auth.service';
 
 @Component({
   selector: 'app-home',
@@ -32,7 +33,8 @@ export class HomeComponent {
     return number ? whatsappHref(number) : '';
   });
 
-  protected readonly login_with_google = inject(FirebaseAuthService);
+  private readonly gate = inject(AuthGate);
+  private readonly auth = inject(AuthService);
 
   protected readonly name = signal('');
   protected readonly mail = signal('');
@@ -60,8 +62,14 @@ export class HomeComponent {
     this.error.set('');
   }
 
-  protected submit(event: Event): void {
+  /**
+   * Sending a message needs an account. A guest who presses "send" gets the sign-in window first; whatever they
+   * typed stays in the form, and the message goes out by itself as soon as they are signed in.
+   */
+  protected async submit(event: Event): Promise<void> {
     event.preventDefault();
+    if (!(await this.gate.ensure('message'))) return;
+    this.fillFromAccount();
     const form = this.i18n.content().contact;
     const name = this.name().trim();
     const email = this.mail().trim();
@@ -81,14 +89,20 @@ export class HomeComponent {
     }).subscribe({
       next: () => {
         this.sent.set(true);
-        this.name.set('');
-        this.mail.set('');
-        this.phoneField.set('');
         this.subject.set('');
         this.message.set('');
         this.error.set('');
       },
       error: () => this.error.set(form.failed),
     });
+  }
+
+  /** Fills the name, email and phone the visitor left empty with the ones from their account. */
+  private fillFromAccount(): void {
+    const user = this.auth.user();
+    if (!user) return;
+    if (!this.name().trim()) this.name.set(this.auth.displayName());
+    if (!this.mail().trim()) this.mail.set(user.email);
+    if (!this.phoneField().trim() && user.phone) this.phoneField.set(user.phone);
   }
 }

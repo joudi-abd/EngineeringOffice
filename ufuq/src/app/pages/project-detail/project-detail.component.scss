@@ -1,3 +1,5 @@
+@use '../../../theme-vars' as t;
+
 :host {
   display: block;
 }
@@ -70,7 +72,7 @@
   padding: 0;
   border: 0;
   overflow: hidden;
-  background: #0b0a09;
+  background: var(--tile);
   cursor: pointer;
 }
 
@@ -92,7 +94,7 @@
   place-items: center;
   background: rgba(0, 0, 0, 0.58);
   color: #fff;
-  font-family: "Neue Power", "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--latin);
   font-size: clamp(2rem, 4vw, 3.4rem);
   font-weight: 400;
   letter-spacing: 0.02em;
@@ -104,6 +106,7 @@
 }
 
 .viewer {
+  @include t.always-dark;
   position: fixed;
   inset: 0;
   z-index: 30;
@@ -206,7 +209,7 @@
   aspect-ratio: 16 / 9;
   border: 0;
   border-radius: 12px;
-  background: #0b0a09;
+  background: var(--tile);
 }
 
 .intro {
@@ -349,7 +352,7 @@ dd {
 .stars svg {
   width: 14px;
   height: 14px;
-  fill: rgba(246, 242, 235, 0.28);
+  fill: var(--star-off);
 }
 
 .stars svg.is-on {
@@ -380,7 +383,7 @@ dd {
   width: 36px;
   height: 36px;
   padding: 0;
-  color: rgba(246, 242, 235, 0.28);
+  color: var(--star-off);
   background: none;
   border: 0;
   cursor: pointer;
@@ -407,7 +410,7 @@ dd {
   padding: 0;
   overflow: auto;
   color: var(--paper);
-  background: #111111;
+  background: var(--surface);
   border: 1px solid var(--line);
 }
 
@@ -442,34 +445,29 @@ dd {
   font-size: 14px;
 }
 
-.sheet input,
 .sheet textarea {
-  width: 100%;
-  padding: 10px 0;
-  color: var(--paper);
-  background: none;
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  font: inherit;
   resize: vertical;
 }
 
 .sheet label.consent {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  align-items: center;
+  gap: 12px;
 }
 
 .consent input {
   width: auto;
-  margin-top: 4px;
-  accent-color: var(--gold);
 }
 
 .error {
   margin: 0;
-  color: #e7b4a4;
+  padding: 10px 14px;
+  color: var(--err-ink);
+  background: var(--err-bg);
+  border: 1px solid var(--err-line);
+  border-radius: 12px;
   font-size: 14px;
+  line-height: 1.6;
 }
 
 .actions {
@@ -479,22 +477,9 @@ dd {
   gap: 18px 28px;
 }
 
-.send {
-  padding: 12px 18px;
-  color: #000000;
-  background: var(--gold-soft);
-  border: 0;
-  font: inherit;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.dismiss {
-  padding: 0;
-  color: inherit;
-  background: none;
-  border: 0;
-  cursor: pointer;
+.actions .send,
+.actions .dismiss {
+  flex: none;
 }
 
 .missing {

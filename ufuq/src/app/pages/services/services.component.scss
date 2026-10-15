@@ -76,7 +76,7 @@
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 14px;
-  font-weight: 300;
+  font-weight: var(--body-weight);
   line-height: 1.6;
 }
 
@@ -113,7 +113,7 @@
 }
 
 .next {
-  background: #0b0a09;
+  background: var(--tile);
   border-top: 1px solid var(--line);
 }
 
