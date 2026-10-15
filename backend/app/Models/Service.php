@@ -33,4 +33,10 @@ class Service extends Model
             ->withPivot('sort_order')
             ->orderByPivot('sort_order');
     }
+
+    public function projectRequests(): BelongsToMany
+    {
+        return $this->belongsToMany(ProjectRequest::class, 'project_request_services')
+        ->withTimestamps();
+    }
 }

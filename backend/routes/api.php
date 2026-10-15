@@ -20,6 +20,9 @@ use App\Http\Controllers\Api\Admin\ContactMessageController as AdminContactMessa
 use App\Http\Controllers\Api\Public\SettingController as PublicSettingController;
 use App\Http\Controllers\Api\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Api\Admin\ProjectVideoController;
+use App\Http\Controllers\Api\Public\ProjectRequestController as PublicProjectRequestController;
+use App\Http\Controllers\Api\Admin\ProjectRequestController as AdminProjectRequestController;
+use App\Http\Controllers\Api\Admin\ProjectRequestStatusController as AdminProjectRequestStatusController;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Route;
@@ -114,6 +117,13 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::put('/projects/{project}/gallery/{image}' , [ProjectGalleryImageController::class , 'update'])->middleware('permission:projects.update');
     Route::patch('/projects/{project}/gallery/{image}' , [ProjectGalleryImageController::class , 'update'])->middleware('permission:projects.update');
     Route::delete('/projects/{project}/gallery/{image}' , [ProjectGalleryImageController::class , 'destroy'])->middleware('permission:projects.update');
+
+    Route::middleware('role:site_manager|admin|super_admin')->group(function () {
+        Route::get('/project-requests' , [AdminProjectRequestController::class , 'index']);
+        Route::get('/project-requests/{projectRequest}' , [AdminProjectRequestController::class , 'show']);
+        Route::put('/project-requests/{projectRequest}' , [AdminProjectRequestStatusController::class , 'update']);
+        Route::patch('/project-requests/{projectRequest}' , [AdminProjectRequestStatusController::class , 'update']);
+    });
 });
 
 Route::get('/categories' , [PublicProjectCategoryController::class , 'index']);
@@ -139,3 +149,10 @@ Route::post('/testimonials' , [PublicTestimonialController::class , 'storeGlobal
 Route::post('/contact-messages' , [PublicContactMessageController::class , 'store'])->middleware('throttle:5,10');
 
 Route::get('/settings' , [PublicSettingController::class , 'index']);
+
+Route::middleware('auth:sanctum')->prefix('project-requests')->group(function () {
+    Route::get('/' , [PublicProjectRequestController::class , 'index']);
+    Route::post('/' , [PublicProjectRequestController::class , 'store']);
+    Route::get('/{projectRequest}' , [PublicProjectRequestController::class , 'show']);
+    Route::patch('/{projectRequest}' , [PublicProjectRequestController::class , 'cancel']);
+});

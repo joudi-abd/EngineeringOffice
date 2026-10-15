@@ -2,6 +2,9 @@
 
 namespace App\Support;
 
+use Illuminate\Validation\ValidationException;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileUnacceptableForCollection;
 use Spatie\MediaLibrary\MediaCollections\File;
 
 final class ProjectMediaRules
@@ -60,6 +63,21 @@ final class ProjectMediaRules
     public static function acceptsVideo(File $file, mixed $subject = null): bool
     {
         return $file->size <= self::VIDEO_MAX_BYTES;
+    }
+
+    public static function store(callable $upload, string $attribute, string $kind): mixed
+    {
+        try {
+            return $upload();
+        } catch (FileUnacceptableForCollection|FileIsTooBig) {
+            throw ValidationException::withMessages([
+                $attribute => [
+                    $kind === 'video'
+                        ? 'صيغة الفيديو يجب أن تكون MP4 أو WebM أو MOV.'
+                        : 'يُسمح بصيغ JPG و JPEG و PNG و WebP فقط.',
+                ],
+            ]);
+        }
     }
 
     public static function imageMessages(string $attribute): array

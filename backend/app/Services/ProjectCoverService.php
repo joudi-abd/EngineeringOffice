@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Project;
+use App\Support\ProjectMediaRules;
 use Illuminate\Http\UploadedFile;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -15,9 +16,13 @@ class ProjectCoverService
         Project $project,
         UploadedFile $cover
     ): Media {
-        return $project
-            ->addMedia($cover)
-            ->toMediaCollection('cover_image');
+        return ProjectMediaRules::store(
+            fn () => $project
+                ->addMedia($cover)
+                ->toMediaCollection('cover_image'),
+            'cover',
+            'image',
+        );
     }
 
     /**

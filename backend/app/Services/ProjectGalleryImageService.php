@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Project;
+use App\Support\ProjectMediaRules;
 use Illuminate\Http\UploadedFile;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -17,13 +18,17 @@ class ProjectGalleryImageService
         ?string $title = null,
         ?string $description = null
     ): Media {
-        return $project
-            ->addMedia($image)
-            ->withCustomProperties([
-                'title' => $title,
-                'description' => $description,
-            ])
-            ->toMediaCollection('gallery');
+        return ProjectMediaRules::store(
+            fn () => $project
+                ->addMedia($image)
+                ->withCustomProperties([
+                    'title' => $title,
+                    'description' => $description,
+                ])
+                ->toMediaCollection('gallery'),
+            'image',
+            'image',
+        );
     }
 
     /**
