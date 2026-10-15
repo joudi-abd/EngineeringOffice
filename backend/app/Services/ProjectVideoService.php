@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Project;
+use App\Support\ProjectMediaRules;
 use Illuminate\Http\UploadedFile;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -17,13 +18,17 @@ class ProjectVideoService
         ?string $title = null,
         ?string $description = null
     ): Media {
-        return $project
-            ->addMedia($video)
-            ->withCustomProperties([
-                'title' => $title,
-                'description' => $description,
-            ])
-            ->toMediaCollection('videos');
+        return ProjectMediaRules::store(
+            fn () => $project
+                ->addMedia($video)
+                ->withCustomProperties([
+                    'title' => $title,
+                    'description' => $description,
+                ])
+                ->toMediaCollection('videos'),
+            'video',
+            'video',
+        );
     }
 
     /**

@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use App\Support\ProjectMediaRules;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Project extends Model
+class Project extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
         'category_id',
@@ -22,7 +25,6 @@ class Project extends Model
         'area',
         'year',
         'status',
-        'cover_image',
         'is_featured',
         'published_at',
     ];
@@ -42,15 +44,6 @@ class Project extends Model
         return $this->belongsTo(ProjectCategory::class, 'category_id');
     }
 
-    public function images(): HasMany
-    {
-        return $this->hasMany(ProjectImage::class);
-    }
-
-    public function videos(): HasMany
-    {
-        return $this->hasMany(ProjectVideo::class);
-    }
 
     public function services(): BelongsToMany
     {
@@ -62,5 +55,24 @@ class Project extends Model
     public function testimonials(): HasMany
     {
         return $this->hasMany(Testimonial::class);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('cover_image')
+            ->singleFile()
+            ->useDisk('public')
+            ->acceptsMimeTypes(ProjectMediaRules::IMAGE_MIME_TYPES)
+            ->acceptsFile(ProjectMediaRules::acceptsImage(...));
+
+        $this->addMediaCollection('gallery')
+            ->useDisk('public')
+            ->acceptsMimeTypes(ProjectMediaRules::IMAGE_MIME_TYPES)
+            ->acceptsFile(ProjectMediaRules::acceptsImage(...));
+
+        $this->addMediaCollection('videos')
+            ->useDisk('public')
+            ->acceptsMimeTypes(ProjectMediaRules::VIDEO_MIME_TYPES)
+            ->acceptsFile(ProjectMediaRules::acceptsVideo(...));
     }
 }

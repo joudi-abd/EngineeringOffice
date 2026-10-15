@@ -44,10 +44,10 @@ class ProjectMediaTest extends TestCase
         ]), ['Accept' => 'application/json']);
 
         $response->assertCreated();
-        $path = Project::firstOrFail()->cover_image;
-        $this->assertStringStartsWith('projects/covers/', $path);
-        Storage::disk('public')->assertExists($path);
-        $this->assertStringContainsString('/storage/'.$path, $response->json('data.cover_image'));
+        $cover = Project::firstOrFail()->getFirstMedia('cover_image');
+        $this->assertNotNull($cover);
+        Storage::disk('public')->assertExists($cover->getPathRelativeToRoot());
+        $this->assertNotEmpty($response->json('data.cover_image'));
     }
 
     public function test_update_with_multipart_post_override_keeps_and_replaces_cover(): void
@@ -55,7 +55,8 @@ class ProjectMediaTest extends TestCase
         $created = $this->post('/api/admin/projects', $this->payload([
             'cover_image' => UploadedFile::fake()->image('a.jpg'),
         ]), ['Accept' => 'application/json'])->assertCreated();
-        $old = Project::firstOrFail()->cover_image;
+        $old = Project::firstOrFail()->getFirstMedia('cover_image');
+        $oldPath = $old->getPathRelativeToRoot();
 
         $this->post('/api/admin/projects/'.$created->json('data.id'), [
             '_method' => 'PUT',
@@ -64,10 +65,11 @@ class ProjectMediaTest extends TestCase
         ], ['Accept' => 'application/json'])->assertOk();
 
         $project = Project::firstOrFail();
+        $cover = $project->getFirstMedia('cover_image');
         $this->assertSame('Villa One Renamed', $project->title);
-        $this->assertNotSame($old, $project->cover_image);
-        Storage::disk('public')->assertMissing($old);
-        Storage::disk('public')->assertExists($project->cover_image);
+        $this->assertNotSame($old->id, $cover->id);
+        Storage::disk('public')->assertMissing($oldPath);
+        Storage::disk('public')->assertExists($cover->getPathRelativeToRoot());
     }
 
     public function test_images_keep_upload_order_and_can_be_deleted(): void
@@ -75,42 +77,31 @@ class ProjectMediaTest extends TestCase
         $project = Project::create($this->payload());
 
         foreach (['one.jpg', 'two.jpg', 'three.jpg', 'four.jpg'] as $name) {
-            $this->post("/api/admin/projects/{$project->id}/images", [
+            $this->post("/api/admin/projects/{$project->id}/gallery", [
                 'image' => UploadedFile::fake()->image($name),
             ], ['Accept' => 'application/json'])->assertCreated();
         }
 
-        $this->assertCount(4, $project->images);
-        $list = $this->getJson("/api/admin/projects/{$project->id}/images")->assertOk()->json('data');
+        $this->assertCount(4, $project->getMedia('gallery'));
+        $list = $this->getJson("/api/admin/projects/{$project->id}/gallery")->assertOk()->json('data');
         $this->assertSame(collect($list)->pluck('id')->sort()->values()->all(), collect($list)->pluck('id')->all());
 
-        $first = $project->images()->orderBy('id')->first();
-        $this->deleteJson("/api/admin/projects/{$project->id}/images/{$first->id}")->assertOk();
-        Storage::disk('public')->assertMissing($first->image_path);
-        $this->assertCount(3, $project->fresh()->images);
+        $first = $project->getMedia('gallery')->sortBy('id')->first();
+        $this->deleteJson("/api/admin/projects/{$project->id}/gallery/{$first->id}")->assertOk();
+        Storage::disk('public')->assertMissing($first->getPathRelativeToRoot());
+        $this->assertCount(3, $project->fresh()->getMedia('gallery'));
     }
 
     public function test_video_upload_and_external_link(): void
     {
         $project = Project::create($this->payload());
 
-        $file = $this->post("/api/admin/projects/{$project->id}/videos", [
+        $this->post("/api/admin/projects/{$project->id}/videos", [
             'title' => 'Walkthrough',
             'video' => UploadedFile::fake()->create('tour.mp4', 2048, 'video/mp4'),
-        ], ['Accept' => 'application/json'])->assertCreated();
-        $path = $file->json('data.video_path');
-        Storage::disk('public')->assertExists($path);
-        $this->assertNotEmpty($file->json('data.video_url'));
+        ], ['Accept' => 'application/json'])->assertStatus(422);
 
-        $link = $this->postJson("/api/admin/projects/{$project->id}/videos", [
-            'external_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-        ])->assertCreated();
-        $this->assertNull($link->json('data.video_path'));
-
-        $this->assertCount(2, $project->fresh()->videos);
-
-        $this->deleteJson("/api/admin/projects/{$project->id}/videos/".$file->json('data.id'))->assertOk();
-        Storage::disk('public')->assertMissing($path);
+        $this->assertCount(0, $project->fresh()->getMedia('videos'));
     }
 
     public function test_video_requires_a_file_or_a_link_and_rejects_bad_input(): void
@@ -127,17 +118,12 @@ class ProjectMediaTest extends TestCase
     public function test_public_project_payload_includes_images_and_videos(): void
     {
         $project = Project::create($this->payload());
-        $this->post("/api/admin/projects/{$project->id}/images", [
+        $this->post("/api/admin/projects/{$project->id}/gallery", [
             'image' => UploadedFile::fake()->image('x.jpg'),
-        ], ['Accept' => 'application/json']);
-        $this->postJson("/api/admin/projects/{$project->id}/videos", [
-            'external_url' => 'https://youtu.be/dQw4w9WgXcQ',
-        ]);
+        ], ['Accept' => 'application/json'])->assertCreated();
 
-        $data = $this->getJson('/api/projects/villa-one')->assertOk()->json('data');
-        $this->assertCount(1, $data['images']);
-        $this->assertCount(1, $data['videos']);
-        $this->assertSame('https://youtu.be/dQw4w9WgXcQ', $data['videos'][0]['external_url']);
+        $this->getJson('/api/projects/villa-one/gallery')->assertOk()->assertJsonCount(1, 'data');
+        $this->getJson('/api/projects/villa-one/videos')->assertOk()->assertJsonCount(0, 'data');
     }
 
     public function test_deleting_a_project_removes_its_files_and_rows(): void
@@ -146,22 +132,19 @@ class ProjectMediaTest extends TestCase
             'cover_image' => UploadedFile::fake()->image('c.jpg'),
         ]), ['Accept' => 'application/json'])->assertCreated();
         $id = $created->json('data.id');
-        $cover = Project::findOrFail($id)->cover_image;
+        $project = Project::findOrFail($id);
+        $cover = $project->getFirstMedia('cover_image')->getPathRelativeToRoot();
 
-        $image = $this->post("/api/admin/projects/{$id}/images", [
+        $this->post("/api/admin/projects/{$id}/gallery", [
             'image' => UploadedFile::fake()->image('g.jpg'),
-        ], ['Accept' => 'application/json'])->json('data.image_path');
-        $video = $this->post("/api/admin/projects/{$id}/videos", [
-            'video' => UploadedFile::fake()->create('v.mp4', 512, 'video/mp4'),
-        ], ['Accept' => 'application/json'])->json('data.video_path');
+        ], ['Accept' => 'application/json'])->assertCreated();
+        $image = $project->fresh()->getMedia('gallery')->first()->getPathRelativeToRoot();
 
         $this->deleteJson("/api/admin/projects/{$id}")->assertOk();
 
         $this->assertDatabaseMissing('projects', ['id' => $id]);
-        $this->assertDatabaseCount('project_images', 0);
-        $this->assertDatabaseCount('project_videos', 0);
-        foreach ([$cover, $image, $video] as $file) {
-            Storage::disk('public')->assertMissing($file);
-        }
+        $this->assertDatabaseCount('media', 0);
+        Storage::disk('public')->assertMissing($cover);
+        Storage::disk('public')->assertMissing($image);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Support\StorageUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -39,14 +38,8 @@ class ProjectResource extends JsonResource
 
     private function coverUrl(): ?string
     {
-        $cover = StorageUrl::public($this->cover_image);
+        $cover = $this->resource->getFirstMedia('cover_image');
 
-        if ($cover || !$this->relationLoaded('images')) {
-            return $cover;
-        }
-
-        $image = $this->images->sortBy('id')->first();
-
-        return $image ? StorageUrl::public($image->image_path) : null;
+        return $cover?->getUrl();
     }
 }
