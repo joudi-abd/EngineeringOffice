@@ -1,3 +1,5 @@
+@use '../../../forms' as f;
+
 :host {
   display: block;
 }
@@ -13,13 +15,13 @@
   align-items: center;
   min-height: 104px;
   padding: 18px 46px 16px;
-  color: #fff;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  color: var(--paper);
+  transition: background 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
 }
 
 .top--solid {
-  background: rgba(0, 0, 0, 0.92);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+  background: var(--header-solid);
+  box-shadow: 0 1px 0 var(--header-line);
   backdrop-filter: blur(16px);
 }
 
@@ -59,10 +61,66 @@
   text-transform: uppercase;
 }
 
+.drawer__out {
+  padding: 0;
+  color: inherit;
+  background: none;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.icon {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: inherit;
+  background: none;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+}
+
+.icon:hover {
+  color: var(--gold-soft);
+  background: rgba(170, 142, 105, 0.12);
+  border-color: var(--gold);
+}
+
+.icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* A small gold dot on the profile icon says "you are signed in". */
+.icon__dot {
+  position: absolute;
+  top: 6px;
+  inset-inline-end: 6px;
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--ink);
+}
+
 .lang {
-  font-family: "Neue Power", "29LT Bukra", sans-serif;
-  font-size: 15px;
-  font-weight: 500;
+  @include f.button-pill;
+  padding: 9px 18px;
+  color: inherit;
+  font-family: var(--sans);
+  font-size: 14px;
   letter-spacing: 0.01em;
   line-height: 1;
   text-transform: none;
@@ -116,7 +174,7 @@
   display: block;
   width: 22px;
   height: 1px;
-  background: #fff;
+  background: currentColor;
 }
 
 .drawer {
@@ -145,6 +203,18 @@
     display: flex;
   }
 
+  .actions {
+    gap: 10px;
+  }
+
+  .drawer__out {
+    padding: 16px 0;
+    color: var(--gold-soft);
+    text-align: start;
+    font-size: 14px;
+    border-bottom: 1px solid var(--header-line);
+  }
+
   .logo__img {
     height: 28px;
   }
@@ -163,14 +233,14 @@
     max-height: calc(100dvh - 78px);
     overflow: auto;
     padding: 8px 18px 96px;
-    background: #000000;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--ink);
+    border-top: 1px solid var(--header-line);
   }
 
   .drawer a {
     padding: 16px 0;
     text-align: start;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid var(--header-line);
   }
 
   .drawer a.drawer__phone {

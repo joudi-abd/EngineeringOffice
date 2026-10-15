@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
+  <link rel="preload" href="/fonts/montserrat-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/cairo-var.woff2" as="font" type="font/woff2" crossorigin>
   <script>
     try {
       var storedLang = localStorage.getItem('ufuq-lang');
@@ -8,6 +10,11 @@
         document.documentElement.lang = storedLang;
         document.documentElement.dir = storedLang === 'ar' ? 'rtl' : 'ltr';
       }
+    } catch (e) {}
+    try {
+      var storedTheme = localStorage.getItem('ufuq-theme');
+      var light = storedTheme ? storedTheme === 'light' : window.matchMedia('(prefers-color-scheme: light)').matches;
+      document.documentElement.dataset.theme = light ? 'light' : 'dark';
     } catch (e) {}
   </script>
   <meta charset="utf-8">

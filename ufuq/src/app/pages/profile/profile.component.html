@@ -1,0 +1,103 @@
+@let c = copy();
+@let errors = authCopy().errors;
+
+<main id="top" class="page" tabindex="-1">
+  @if (changed()) {
+    <section class="intro done" aria-labelledby="done-title">
+      <p class="kicker">{{ c.eyebrow }}</p>
+      <h1 class="display" id="done-title">{{ c.done.title }}</h1>
+      <p class="quiet lede">{{ c.done.text }}</p>
+      <a class="btn" routerLink="/">{{ c.done.home }}</a>
+    </section>
+  } @else if (auth.user()) {
+    <header class="intro">
+      <div class="avatar" aria-hidden="true"><span>{{ initials() }}</span></div>
+      <div class="intro__text">
+        <p class="kicker">{{ c.eyebrow }}</p>
+        <h1 class="display">{{ auth.displayName() }}</h1>
+        <p class="quiet lede">{{ c.lede }}</p>
+      </div>
+    </header>
+
+    <section class="panels">
+      <article class="card" aria-labelledby="details-title">
+        <h2 id="details-title">{{ c.details.title }}</h2>
+        <dl class="rows">
+          @for (row of rows(); track row.key) {
+            <div class="row">
+              <dt>{{ row.label }}</dt>
+              <dd>
+                @if (row.tone) {
+                  <span class="badge" [class.badge--ok]="row.tone === 'ok'" [class.badge--warn]="row.tone === 'warn'">{{ row.value }}</span>
+                } @else if (row.ltr) {
+                  <bdi dir="ltr">{{ row.value }}</bdi>
+                } @else {
+                  {{ row.value }}
+                }
+              </dd>
+            </div>
+          }
+        </dl>
+        <p class="note">
+          {{ c.details.editNote }}
+          <a class="text-link" href="/#contact" (click)="sections.go($event, 'contact')">{{ c.details.contact }}</a>
+        </p>
+      </article>
+
+      <article class="card" aria-labelledby="security-title">
+        <h2 id="security-title">{{ c.security.title }}</h2>
+        <p class="quiet">{{ c.security.lede }}</p>
+
+        @if (step() === 'idle') {
+          @if (error(); as e) { <p class="message message--error" role="alert">{{ errors[e] }}</p> }
+          <div class="actions">
+            <button class="btn" type="button" [disabled]="busy()" (click)="sendCode()">{{ c.security.send }}</button>
+          </div>
+        } @else {
+          <form class="form" novalidate (submit)="save($event)">
+            @if (notice()) { <p class="message message--notice" role="status">{{ notice() }}</p> }
+            <label>
+              <span class="label">{{ c.security.code }}</span>
+              <input
+                class="code"
+                dir="ltr"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                maxlength="6"
+                [value]="code()"
+                (input)="setCode($event)"
+              />
+            </label>
+            <app-password-field
+              [label]="c.security.password"
+              autocomplete="new-password"
+              [hint]="c.security.hint"
+              [value]="password()"
+              (valueChange)="password.set($event); error.set('')"
+            />
+            <app-password-field
+              [label]="c.security.confirm"
+              autocomplete="new-password"
+              [value]="confirm()"
+              (valueChange)="confirm.set($event); error.set('')"
+            />
+            @if (error(); as e) { <p class="message message--error" role="alert">{{ errors[e] }}</p> }
+            <div class="actions">
+              <button class="btn" type="submit" [disabled]="busy()">{{ c.security.save }}</button>
+              @if (cooldown() > 0) {
+                <span class="wait">{{ c.security.resendIn.replace('{s}', '' + cooldown()) }}</span>
+              } @else {
+                <button class="btn btn--outline" type="button" [disabled]="busy()" (click)="sendCode()">{{ c.security.resend }}</button>
+              }
+            </div>
+          </form>
+        }
+      </article>
+    </section>
+
+    <footer class="leave">
+      <button class="btn btn--outline" type="button" (click)="signOut()">{{ c.signOut }}</button>
+      <a class="text-link" routerLink="/">{{ c.home }}</a>
+    </footer>
+  }
+</main>

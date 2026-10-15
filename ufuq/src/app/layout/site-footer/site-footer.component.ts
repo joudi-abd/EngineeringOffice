@@ -3,6 +3,7 @@ import { LanguageService } from '../../core/language.service';
 import { SiteApi } from '../../core/site-api.service';
 import { gmailHref, telHref } from '../../core/site-content';
 import { SectionNav } from '../../core/section-nav';
+import { ThemeService } from '../../core/theme.service';
 import { SocialLinksComponent } from '../social-links/social-links.component';
 
 @Component({
@@ -23,6 +24,12 @@ export class SiteFooterComponent {
   protected readonly emailLink = computed(() => gmailHref(this.email()));
   protected readonly year = new Date().getFullYear();
   protected readonly logo = computed(() => this.site.logo());
+  private readonly theme = inject(ThemeService);
+  /** Light lettering on the dark theme, dark lettering on the light one. */
+  protected readonly artwork = computed(() => {
+    const tone = this.theme.theme() === 'dark' ? 'light' : 'dark';
+    return this.i18n.lang() === 'ar' ? `brand/logo-ar-${tone}.png` : `brand/logo-en-${tone}.png`;
+  });
   protected readonly blurb = computed(() => this.site.setting('company_description') || this.i18n.content().footer.blurb);
   protected readonly rights = computed(() => {
     const footer = this.i18n.content().footer;

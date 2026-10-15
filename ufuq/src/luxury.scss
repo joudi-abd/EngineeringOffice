@@ -1,3 +1,5 @@
+@use './forms' as f;
+
 /*
  * Luxury layer: texture, light, hairlines and motion shared by every page.
  * Everything is scoped under `main#top` so it wins over component styles without !important.
@@ -7,7 +9,6 @@
   --gold-grad: linear-gradient(110deg, #cbb892 0%, #aa8e69 48%, #7d5d3b 100%);
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.18, 1);
-  --ink-3: #0a0908;
   --o: left;
   --to-end: 90deg;
 }
@@ -19,7 +20,7 @@ html[dir='rtl'] {
 
 html {
   scrollbar-width: thin;
-  scrollbar-color: var(--gold-deep) #000;
+  scrollbar-color: var(--gold-deep) var(--ink);
 }
 
 /* Reading progress: a single gold hairline at the very top. */
@@ -42,7 +43,7 @@ body::after {
   z-index: 55;
   inset: 0;
   pointer-events: none;
-  opacity: 0.07;
+  opacity: var(--grain);
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
 
@@ -216,7 +217,7 @@ main#top .catalogue li:hover h3 {
 main#top .points__n,
 main#top .points li > span {
   color: transparent;
-  font-family: "Neue Power", "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--latin);
   font-size: clamp(2.6rem, 4vw, 3.6rem);
   font-weight: 300;
   line-height: 1;
@@ -234,7 +235,7 @@ main#top .points li {
 main#top .shot,
 main#top .archive figure,
 main#top .mosaic button {
-  background: #0b0a09;
+  background: var(--tile);
 }
 
 main#top .shot::after {
@@ -276,7 +277,7 @@ main#top .contact {
   position: relative;
   background:
     radial-gradient(60% 120% at 0% 100%, rgba(170, 142, 105, 0.16), transparent 62%),
-    linear-gradient(180deg, var(--ink-3), #000);
+    linear-gradient(180deg, var(--ink-3), var(--ink));
   border-top: 0;
 }
 
@@ -284,7 +285,7 @@ html[dir='rtl'] main#top .next,
 html[dir='rtl'] main#top .contact {
   background:
     radial-gradient(60% 120% at 100% 100%, rgba(170, 142, 105, 0.16), transparent 62%),
-    linear-gradient(180deg, var(--ink-3), #000);
+    linear-gradient(180deg, var(--ink-3), var(--ink));
 }
 
 main#top .next::before,
@@ -306,53 +307,35 @@ html[lang='ar'] main#top .next .display {
   font-size: clamp(2rem, 4vw, 3.3rem);
 }
 
-/* ---------- Buttons and fields ---------- */
+/* ---------- Buttons and fields (see forms.scss) ---------- */
 
 main#top .contact__form button,
 main#top .send {
-  padding: 16px 38px;
-  color: var(--gold-soft);
-  background: transparent;
-  border: 1px solid var(--gold);
-  border-radius: 0;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  transition: color 0.4s ease, background 0.4s ease, box-shadow 0.4s ease;
+  @include f.button-primary;
+  padding-inline: 38px;
 }
 
-main#top .contact__form button:hover,
-main#top .send:hover {
-  color: #000;
-  background: var(--gold-soft);
-  box-shadow: 0 14px 40px rgba(170, 142, 105, 0.25);
-}
-
-html[lang='ar'] main#top .contact__form button,
-html[lang='ar'] main#top .send {
-  font-size: 16px;
-  letter-spacing: 0;
-  text-transform: none;
+main#top .dismiss {
+  @include f.button-outline;
+  padding-inline: 28px;
+  background-image: none;
 }
 
 main#top .contact__form input,
 main#top .contact__form textarea,
-main#top .sheet input,
+main#top .sheet input:not([type='checkbox']),
 main#top .sheet textarea {
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  @include f.field;
 }
 
-main#top .contact__form input:focus,
-main#top .contact__form textarea:focus,
-main#top .sheet input:focus,
-main#top .sheet textarea:focus {
-  outline: none;
-  border-bottom-color: var(--gold);
-  box-shadow: 0 1px 0 var(--gold);
+main#top .sheet input[type='checkbox'] {
+  @include f.checkbox;
 }
 
 main#top .filters button {
-  letter-spacing: 0.02em;
-  transition: color 0.4s ease, border-color 0.4s ease;
+  @include f.button-pill;
+}
+
+main#top .sheet {
+  border-radius: f.$radius-sheet;
 }

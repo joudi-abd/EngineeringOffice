@@ -5,7 +5,7 @@
     <div class="foot__brand">
       <img
         class="foot__logo"
-        [src]="logo() || (i18n.lang() === 'ar' ? 'brand/logo-ar-light.png' : 'brand/logo-en-light.png')"
+        [src]="logo() || artwork()"
         [alt]="site.companyName()"
       />
       <p class="quiet">{{ blurb() }}</p>

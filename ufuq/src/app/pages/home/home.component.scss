@@ -1,8 +1,22 @@
+@use '../../../theme-vars' as t;
+
 :host {
   display: block;
 }
 
+/* The hero is a photograph, so each theme gets its own treatment of it: a dark,
+   moody veil at night, and a pale, airy one by day that melts into the page. */
 .hero {
+  --veil: 0, 0, 0;
+  --photo-scale: 1.16;
+  --photo-fit: 62% 42%;
+  --photo-height: 85%;
+  --photo-from: brightness(0.6);
+  --photo-to: brightness(1);
+  --hero-text: #f2f0eb;
+  --hero-text-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+  --hero-line: rgba(255, 255, 255, 0.42);
+  --hero-frame: rgba(203, 184, 146, 0.22);
   position: relative;
   height: 100vh;
   height: 100dvh;
@@ -11,27 +25,38 @@
   overflow: hidden;
 }
 
+:host-context(html[data-theme='light']) .hero {
+  --veil: 247, 243, 236;
+  --photo-from: brightness(1.12) saturate(0.6);
+  --photo-to: sepia(0.18) saturate(0.85) contrast(1.14);
+  --hero-text: var(--paper);
+  --hero-text-shadow: none;
+  --hero-line: color-mix(in srgb, var(--paper) 38%, transparent);
+  --hero-frame: rgba(140, 111, 70, 0.4);
+}
+
 .hero__photo {
   position: absolute;
-  inset: 0 0 15%;
+  inset: 0 0 auto;
   width: 100%;
-  height: 85%;
+  height: var(--photo-height);
   object-fit: cover;
-  object-position: 62% 42%;
-  scale: 1.16;
+  object-position: var(--photo-fit);
+  scale: var(--photo-scale);
   transform: translate3d(0, calc(min(var(--sy, 0), 900) * 0.07px), 0);
+  filter: var(--photo-to);
   animation: hero-in 2.8s var(--ease) both;
   will-change: transform;
 }
 
 @keyframes hero-in {
   from {
-    scale: 1.32;
-    filter: brightness(0.6);
+    scale: calc(var(--photo-scale) + 0.16);
+    filter: var(--photo-from);
   }
   to {
-    scale: 1.16;
-    filter: brightness(1);
+    scale: var(--photo-scale);
+    filter: var(--photo-to);
   }
 }
 
@@ -39,7 +64,7 @@
   position: absolute;
   z-index: 1;
   inset: 104px clamp(20px, 2.4vw, 44px) 14%;
-  border: 1px solid rgba(203, 184, 146, 0.22);
+  border: 1px solid var(--hero-frame);
   border-bottom: 0;
   pointer-events: none;
   animation: fade-in 2s ease 0.8s both;
@@ -87,12 +112,24 @@
 
 .hero__shade {
   position: absolute;
-  inset: 0 0 15%;
+  inset: 0 0 auto;
+  /* A little taller than the photo, which is scaled up and would otherwise show a strip. */
+  height: calc(var(--photo-height) + 3%);
   background:
-    linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.08) 22%, rgba(0, 0, 0, 0) 40%),
-    linear-gradient(to left, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.28) 24%, rgba(0, 0, 0, 0) 48%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0) 58%, rgba(0, 0, 0, 0.45) 82%, var(--ink) 100%);
+    linear-gradient(180deg, rgba(var(--veil), 0.55) 0%, rgba(var(--veil), 0.08) 22%, rgba(var(--veil), 0) 40%),
+    linear-gradient(to left, rgba(var(--veil), 0.62) 0%, rgba(var(--veil), 0.28) 24%, rgba(var(--veil), 0) 48%),
+    linear-gradient(180deg, rgba(var(--veil), 0) 55%, rgba(var(--veil), 0.45) 78%, var(--ink) 94%);
   pointer-events: none;
+}
+
+/* By day the veil is the page colour: it keeps the header and the title legible and lets the
+   photograph dissolve into the section below instead of ending on a hard edge. */
+:host-context(html[data-theme='light']) .hero__shade {
+  background:
+    linear-gradient(180deg, rgba(var(--veil), 0.92) 0%, rgba(var(--veil), 0.55) 14%, rgba(var(--veil), 0) 36%),
+    linear-gradient(to left, rgba(var(--veil), 0.5) 0%, rgba(var(--veil), 0.18) 22%, rgba(var(--veil), 0) 42%),
+    radial-gradient(60% 44% at 0% 100%, rgba(var(--veil), 0.92) 0%, rgba(var(--veil), 0.55) 50%, rgba(var(--veil), 0) 100%),
+    linear-gradient(180deg, rgba(var(--veil), 0) 46%, rgba(var(--veil), 0.5) 73%, var(--ink) 94%);
 }
 
 .hero__base {
@@ -111,15 +148,15 @@
   right: auto;
   bottom: 13.5vh;
   margin: 0;
-  color: #f2f0eb;
-  font-family: "Neue Power", "Helvetica Neue", Arial, sans-serif;
-  font-weight: 500;
-  font-size: clamp(3.4rem, 6.6vw, 6.4rem);
-  line-height: 0.92;
-  letter-spacing: 0.04em;
+  color: var(--hero-text);
+  font-family: var(--latin);
+  font-weight: 600;
+  font-size: clamp(2.7rem, 5.6vw, 5.4rem);
+  line-height: 1.02;
+  letter-spacing: 0.05em;
   text-align: left;
   text-transform: uppercase;
-  text-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+  text-shadow: var(--hero-text-shadow);
 }
 
 .brand__line {
@@ -146,8 +183,8 @@
   right: auto;
   top: 0.55em;
   margin-left: 0.28em;
-  color: #aa8e69;
-  font-family: "Neue Power", "Helvetica Neue", Arial, sans-serif;
+  color: var(--gold);
+  font-family: var(--latin);
   font-size: 0.28em;
   font-style: normal;
   font-weight: 400;
@@ -168,9 +205,9 @@
   place-items: center;
   width: 102px;
   height: 102px;
-  border: 1px solid rgba(255, 255, 255, 0.42);
+  border: 1px solid var(--hero-line);
   border-radius: 50%;
-  color: #fff;
+  color: var(--hero-text);
   background: none;
   cursor: pointer;
 }
@@ -330,7 +367,12 @@
   overflow: hidden;
   color: inherit;
   text-decoration: none;
-  background: #0b0a09;
+  background: var(--tile);
+}
+
+/* Captions sit on the photo, so the card stays dark in both themes. */
+.shot {
+  @include t.always-dark;
 }
 
 .shot--lead {
@@ -425,34 +467,24 @@
   font-size: 14px;
 }
 
-.contact__form input,
+/* Look of fields and buttons comes from forms.scss through luxury.scss. */
 .contact__form textarea {
-  width: 100%;
-  padding: 10px 0;
-  color: var(--paper);
-  background: none;
-  border: 0;
-  border-bottom: 1px solid var(--line);
-  font: inherit;
   resize: vertical;
 }
 
 .contact__form button {
   justify-self: start;
-  padding: 12px 18px;
-  border-radius: 8px;
-  color: #000000;
-  background: var(--gold-soft);
-  border: 0;
-  font: inherit;
-  font-weight: 500;
-  cursor: pointer;
 }
 
 .contact__error {
   margin: 0;
-  color: #e7b4a4;
+  padding: 10px 14px;
+  color: var(--err-ink);
+  background: var(--err-bg);
+  border: 1px solid var(--err-line);
+  border-radius: 12px;
   font-size: 14px;
+  line-height: 1.6;
 }
 
 .contact__sent {
@@ -468,7 +500,7 @@
   display: inline-block;
   margin-top: 28px;
   color: var(--gold-soft);
-  font-family: "Neue Power", "29LT Bukra", sans-serif;
+  font-family: var(--sans);
   font-size: clamp(1.7rem, 3vw, 2.6rem);
   font-variant-numeric: lining-nums;
   letter-spacing: 0.03em;
@@ -476,7 +508,7 @@
 }
 
 .contact__phone:hover {
-  color: #fff;
+  color: var(--hot);
 }
 
 .contact__ways {
@@ -492,7 +524,7 @@
 .contact__ways a {
   color: var(--muted);
   font-size: 13px;
-  font-weight: 300;
+  font-weight: var(--body-weight);
   letter-spacing: 0.06em;
   text-decoration: none;
 }
@@ -628,12 +660,12 @@
   font-size: clamp(1.9rem, 4.2vw, 3.6rem);
   font-weight: 300;
   line-height: 1.3;
-  color: rgba(242, 240, 235, 0.2);
+  color: var(--marquee);
 }
 
 :host-context(html:not([lang='ar'])) .marquee li {
   color: transparent;
-  -webkit-text-stroke: 1px rgba(203, 184, 146, 0.45);
+  -webkit-text-stroke: 1px rgba(170, 142, 105, 0.7);
 }
 
 .marquee li::after {
@@ -681,7 +713,7 @@ main#top .contact > div > .kicker::before {
   height: auto;
   background: none;
   color: var(--gold-soft);
-  font-family: "Neue Power", "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--latin);
   font-size: 13px;
   letter-spacing: 0.2em;
 }
@@ -762,6 +794,14 @@ main#top .contact > div > .kicker::after {
 }
 
 @media (max-width: 800px) {
+  /* On a portrait screen the photograph is cropped to a narrow slice, so it is framed on the
+     tower and its overhang, shown at a lower zoom, and ends well above the title. */
+  .hero {
+    --photo-scale: 1.04;
+    --photo-fit: 79% 50%;
+    --photo-height: 72%;
+  }
+
   .hero__frame {
     inset: 84px 14px 15%;
   }

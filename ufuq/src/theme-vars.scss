@@ -1,0 +1,71 @@
+/*
+ * The two palettes of the site. This file only defines values and mixins (it prints no CSS), so components can
+ * `@use` it. theme.scss prints the palettes on <html>: dark by default, light under `data-theme='light'`.
+ *
+ * Components never hard-code a surface or text colour: they read these variables, so one switch re-colours the site.
+ */
+
+$dark: (
+  '--ink': #000000,
+  '--ink-2': #141414,
+  '--ink-3': #0a0908,
+  '--paper': #f2f0eb,
+  '--hot': #ffffff,
+  '--muted': rgba(242, 240, 235, 0.72),
+  '--faint': rgba(242, 240, 235, 0.46),
+  '--line': rgba(242, 240, 235, 0.16),
+  '--hairline': rgba(242, 240, 235, 0.18),
+  '--gold': #aa8e69,
+  '--gold-soft': #cbb892,
+  '--gold-deep': #7d5d3b,
+  '--surface': #111111,
+  '--tile': #0b0a09,
+  '--glass': rgba(255, 255, 255, 0.035),
+  '--header-solid': rgba(0, 0, 0, 0.92),
+  '--header-line': rgba(255, 255, 255, 0.07),
+  '--star-off': rgba(246, 242, 235, 0.28),
+  '--marquee': rgba(242, 240, 235, 0.2),
+  '--err-ink': #efc2b4,
+  '--err-bg': rgba(231, 180, 164, 0.08),
+  '--err-line': rgba(231, 180, 164, 0.32),
+  '--grain': 0.07,
+);
+
+$light: (
+  '--ink': #f7f3ec,
+  '--ink-2': #eee8dc,
+  '--ink-3': #e7dfd0,
+  '--paper': #1c1813,
+  '--hot': #000000,
+  '--muted': rgba(28, 24, 19, 0.72),
+  '--faint': rgba(28, 24, 19, 0.5),
+  '--line': rgba(28, 24, 19, 0.16),
+  '--hairline': rgba(28, 24, 19, 0.2),
+  '--gold': #8c6f46,
+  '--gold-soft': #7a5b34,
+  '--gold-deep': #5f4526,
+  '--surface': #fffdf9,
+  '--tile': #e3dbcc,
+  '--glass': rgba(28, 24, 19, 0.04),
+  '--header-solid': rgba(247, 243, 236, 0.92),
+  '--header-line': rgba(28, 24, 19, 0.1),
+  '--star-off': rgba(28, 24, 19, 0.22),
+  '--marquee': rgba(28, 24, 19, 0.14),
+  '--err-ink': #8f3a27,
+  '--err-bg': rgba(180, 70, 40, 0.07),
+  '--err-line': rgba(180, 70, 40, 0.3),
+  '--grain': 0,
+);
+
+@mixin palette($map) {
+  @each $name, $value in $map {
+    #{$name}: #{$value};
+  }
+}
+
+/* Parts of the site that are dark in both themes (the hero photo, image captions, the lightbox, the footer). */
+@mixin always-dark {
+  @include palette($dark);
+  color: var(--paper);
+  color-scheme: dark;
+}
