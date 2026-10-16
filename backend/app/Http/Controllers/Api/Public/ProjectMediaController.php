@@ -12,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 class ProjectMediaController extends Controller
 {
     /**
-     * Get the cover image of a completed project.
+     * Get the cover image of a project.
      */
     public function cover(string $slug): JsonResponse
     {
@@ -39,7 +39,7 @@ class ProjectMediaController extends Controller
         ]);
     }
         /**
-     * Get gallery images of a completed project.
+     * Get gallery images of a project.
      */
     public function gallery(string $slug): JsonResponse
     {
@@ -53,7 +53,7 @@ class ProjectMediaController extends Controller
     }
 
     /**
-     * Get videos of a completed project.
+     * Get videos of a project.
      */
     public function videos(string $slug): JsonResponse
     {
@@ -73,7 +73,6 @@ class ProjectMediaController extends Controller
     {
         return Project::query()
             ->where('slug', $slug)
-            ->where('status', 'completed')
             ->firstOrFail();
     }
 }

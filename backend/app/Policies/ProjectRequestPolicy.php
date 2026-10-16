@@ -4,63 +4,101 @@ namespace App\Policies;
 
 use App\Models\ProjectRequest;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ProjectRequestPolicy
 {
     /**
-     * Determine whether the user can view any models.
+     * عرض قائمة الطلبات.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasAnyRole([
+            'customer',
+            'site_manager',
+            'admin',
+            'super_admin',
+        ]);
     }
 
     /**
-     * Determine whether the user can view the model.
+     * عرض طلب محدد.
      */
     public function view(User $user, ProjectRequest $projectRequest): bool
     {
-        return false;
+        return $this->isOwner($user, $projectRequest)
+            || $this->isAdmin($user);
     }
 
     /**
-     * Determine whether the user can create models.
+     * إنشاء طلب جديد.
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole('customer');
     }
 
     /**
-     * Determine whether the user can update the model.
+     * تعديل بيانات الطلب.
      */
     public function update(User $user, ProjectRequest $projectRequest): bool
     {
-        return false;
+        return $this->isOwner($user, $projectRequest)
+            && $projectRequest->status === ProjectRequest::STATUS_NEW;
     }
 
     /**
-     * Determine whether the user can delete the model.
+     * إلغاء الطلب.
      */
-    public function delete(User $user, ProjectRequest $projectRequest): bool
+    public function cancel(User $user, ProjectRequest $projectRequest): bool
     {
-        return false;
+        return $this->isOwner($user, $projectRequest)
+            && in_array($projectRequest->status, [
+                ProjectRequest::STATUS_NEW,
+                ProjectRequest::STATUS_UNDER_REVIEW,
+            ], true);
     }
 
     /**
-     * Determine whether the user can restore the model.
+     * إضافة مرفقات أو حذفها.
      */
-    public function restore(User $user, ProjectRequest $projectRequest): bool
-    {
-        return false;
+    public function manageAttachments(
+        User $user,
+        ProjectRequest $projectRequest
+    ): bool {
+        return $this->isOwner($user, $projectRequest)
+            && $projectRequest->status === ProjectRequest::STATUS_NEW;
     }
 
     /**
-     * Determine whether the user can permanently delete the model.
+     * تنزيل المرفقات.
      */
-    public function forceDelete(User $user, ProjectRequest $projectRequest): bool
+    public function downloadAttachment(
+        User $user,
+        ProjectRequest $projectRequest
+    ): bool {
+        return $this->isOwner($user, $projectRequest)
+            || $this->isAdmin($user);
+    }
+
+    /**
+     * التحقق من ملكية الطلب.
+     */
+    private function isOwner(
+        User $user,
+        ProjectRequest $projectRequest
+    ): bool {
+        return (int) $projectRequest->user_id === (int) $user->id;
+    }
+
+    /**
+     * التحقق من الدور الإداري.
+     */
+    private function isAdmin(User $user): bool
     {
-        return false;
+        return $user->hasAnyRole([
+            'site_manager',
+            'admin',
+            'super_admin',
+        ]);
     }
 }

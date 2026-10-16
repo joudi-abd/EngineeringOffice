@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\Admin\ProjectVideoController;
 use App\Http\Controllers\Api\Public\ProjectRequestController as PublicProjectRequestController;
 use App\Http\Controllers\Api\Admin\ProjectRequestController as AdminProjectRequestController;
 use App\Http\Controllers\Api\Admin\ProjectRequestStatusController as AdminProjectRequestStatusController;
+use App\Http\Controllers\Api\ProjectRequestAttachmentController;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Route;
@@ -154,5 +155,9 @@ Route::middleware('auth:sanctum')->prefix('project-requests')->group(function ()
     Route::get('/' , [PublicProjectRequestController::class , 'index']);
     Route::post('/' , [PublicProjectRequestController::class , 'store']);
     Route::get('/{projectRequest}' , [PublicProjectRequestController::class , 'show']);
-    Route::patch('/{projectRequest}' , [PublicProjectRequestController::class , 'cancel']);
+    Route::patch('/{projectRequest}/cancel' , [PublicProjectRequestController::class , 'cancel']);
+    Route::patch('/{projectRequest}/update' , [PublicProjectRequestController::class , 'update']);
+    Route::post('/{projectRequest}/attachments' , [ProjectRequestAttachmentController::class , 'store']);
+    Route::delete('/{projectRequest}/attachments/{attachment}' , [ProjectRequestAttachmentController::class , 'destroy']);
+    Route::get('/{projectRequest}/attachments/{attachment}/download' , [ProjectRequestAttachmentController::class , 'download']);
 });

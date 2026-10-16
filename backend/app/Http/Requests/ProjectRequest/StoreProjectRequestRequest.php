@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\ProjectRequest;
 
+use App\Models\ProjectRequest;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -72,7 +73,7 @@ class StoreProjectRequestRequest extends FormRequest
             'attachments' => [
                 'nullable',
                 'array',
-                'max:10',
+                'max:'.ProjectRequest::MAX_ATTACHMENTS,
             ],
 
             'attachments.*' => [
@@ -80,6 +81,18 @@ class StoreProjectRequestRequest extends FormRequest
                 'file',
                 'mimes:jpg,jpeg,png,webp,pdf',
                 'max:10240',
+            ],
+            'latitude' => [
+                'nullable',
+                'numeric',
+                'min:-90',
+                'max:90',
+            ],
+            'longitude' => [
+                'nullable',
+                'numeric',
+                'min:-180',
+                'max:180',
             ],
         ];
     }

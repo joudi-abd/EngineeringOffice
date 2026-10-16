@@ -7,6 +7,9 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+use App\Models\ProjectRequestAttachment;
+
 use Throwable;
 
 class ProjectRequestService
@@ -30,6 +33,8 @@ class ProjectRequestService
                     'preferred_start_date' =>
                         $data['preferred_start_date'] ?? null,
                     'status' => ProjectRequest::STATUS_NEW,
+                    'latitude' => $data['latitude'] ?? null,
+                    'longitude' => $data['longitude'] ?? null,
                 ]);
 
                 $projectRequest->services()->sync(
@@ -77,5 +82,65 @@ class ProjectRequestService
 
             throw $exception;
         }
+    }
+
+    public function update(
+    ProjectRequest $projectRequest,
+    array $data
+    ): ProjectRequest {
+
+        if ($projectRequest->status !== ProjectRequest::STATUS_NEW) {
+            throw ValidationException::withMessages([
+                'status' => [
+                    'لا يمكن تعديل الطلب بعد بدء معالجته.',
+                ],
+            ]);
+        }
+
+        DB::transaction(function () use ($projectRequest, $data) {
+
+            $projectRequest = ProjectRequest::query()
+                ->lockForUpdate()
+                ->findOrFail($projectRequest->id);
+
+            if ($projectRequest->status !== ProjectRequest::STATUS_NEW) {
+                throw ValidationException::withMessages([
+                    'status' => [
+                        'لا يمكن تعديل الطلب بعد بدء معالجته.',
+                    ],
+                ]);
+            }
+
+            $fields = [
+                'title',
+                'description',
+                'location',
+                'area',
+                'budget',
+                'preferred_start_date',
+                'latitude',
+                'longitude',
+            ];
+
+            $projectRequest->fill(
+                array_intersect_key(
+                    $data,
+                    array_flip($fields)
+                )
+            );
+
+            $projectRequest->save();
+
+            if (array_key_exists('service_ids', $data)) {
+                $projectRequest->services()->sync(
+                    $data['service_ids']
+                );
+            }
+        });
+
+        return $projectRequest->fresh([
+            'services',
+            'attachments',
+        ]);
     }
 }
