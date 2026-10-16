@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Public;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectRequest\StoreProjectRequestRequest;
+use App\Http\Requests\ProjectRequest\UpdateProjectRequestRequest;
 use App\Http\Resources\ProjectRequestResource;
 use App\Models\ProjectRequest;
 use App\Services\ProjectRequestService;
@@ -12,8 +13,10 @@ use Illuminate\Http\Request;
 
 class ProjectRequestController extends Controller
 {
+
     public function index(Request $request)
     {
+        $this->authorize('viewAny', ProjectRequest::class);
         $requests = $request->user()
             ->projectRequests()
             ->with(['services', 'attachments'])
@@ -27,6 +30,7 @@ class ProjectRequestController extends Controller
         StoreProjectRequestRequest $request,
         ProjectRequestService $service
     ): JsonResponse {
+        $this->authorize('create', ProjectRequest::class);
         $projectRequest = $service->create(
             $request->user(),
             $request->validated()
@@ -41,10 +45,7 @@ class ProjectRequestController extends Controller
         Request $request,
         ProjectRequest $projectRequest
     ): ProjectRequestResource {
-        abort_unless(
-            $projectRequest->user_id === $request->user()->id,
-            404
-        );
+        $this->authorize('view', $projectRequest);
 
         $projectRequest->load(['services', 'attachments']);
 
@@ -55,19 +56,7 @@ class ProjectRequestController extends Controller
         Request $request,
         ProjectRequest $projectRequest
     ): JsonResponse {
-        abort_unless(
-            $projectRequest->user_id === $request->user()->id,
-            404
-        );
-
-        abort_unless(
-            in_array($projectRequest->status, [
-                ProjectRequest::STATUS_NEW,
-                ProjectRequest::STATUS_UNDER_REVIEW,
-            ], true),
-            422,
-            'This project request cannot be cancelled.'
-        );
+        $this->authorize('cancel', $projectRequest);
 
         $projectRequest->update([
             'status' => ProjectRequest::STATUS_CANCELLED,
@@ -76,6 +65,24 @@ class ProjectRequestController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Project request cancelled successfully.',
+        ]);
+    }
+
+    public function update(
+        UpdateProjectRequestRequest $request,
+        ProjectRequest $projectRequest,
+        ProjectRequestService $service
+    ): JsonResponse {
+        $this->authorize('update', $projectRequest);
+        $projectRequest = $service->update(
+            $projectRequest,
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Project request updated successfully.',
+            'data' => new ProjectRequestResource($projectRequest),
         ]);
     }
 }

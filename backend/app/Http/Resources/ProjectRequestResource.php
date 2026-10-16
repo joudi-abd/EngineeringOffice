@@ -15,6 +15,8 @@ class ProjectRequestResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'location' => $this->location,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
 
             'area' => $this->area,
             'budget' => $this->budget,
@@ -30,6 +32,20 @@ class ProjectRequestResource extends JsonResource
                 'admin',
                 'super_admin',
             ]) ? $this->admin_notes : null,
+            'user' => $this->when(request()->user()?->hasAnyRole([
+                    'site_manager',
+                    'admin',
+                    'super_admin',
+                ]), fn () => $this->whenLoaded('user', function() {
+                    return [
+                        'id' => $this->user->id,
+                        'first_name' => $this->user->first_name,
+                        'last_name' => $this->user->last_name,
+                        'email' => $this->user->email,
+                        'phone' => $this->user->phone,
+                    ];
+                })
+            ),
 
             'services' => $this->whenLoaded(
                 'services',

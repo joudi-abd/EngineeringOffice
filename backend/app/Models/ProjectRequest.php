@@ -20,6 +20,8 @@ class ProjectRequest extends Model
     public const STATUS_REJECTED = 'rejected';
     public const STATUS_CANCELLED = 'cancelled';
 
+    public const MAX_ATTACHMENTS = 10;
+
     public const STATUSES = [
         self::STATUS_NEW,
         self::STATUS_UNDER_REVIEW,
@@ -39,6 +41,8 @@ class ProjectRequest extends Model
         'preferred_start_date',
         'status',
         'admin_notes',
+        'latitude',
+        'longitude',
     ];
 
     protected function casts(): array
@@ -47,6 +51,8 @@ class ProjectRequest extends Model
             'area' => 'decimal:2',
             'budget' => 'decimal:2',
             'preferred_start_date' => 'date',
+            'latitude' => 'decimal:7',
+            'longitude' => 'decimal:7',
         ];
     }
 
